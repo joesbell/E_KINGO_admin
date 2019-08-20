@@ -8,7 +8,7 @@ import autowire from '@symph/joy/autowire'
 import AppModel from '../../model/AppModel'
 import UserModel from '../../model/UserModel'
 import { registErrorHandler } from '../../util/api'
-import querystring from 'query-string'
+// import querystring from 'query-string'
 // import DynamicLoading from '../../component/DynamicLoading'
 
 // const dynamicCtl = function (loader) {
@@ -138,6 +138,7 @@ export default class MainCtl extends React.Component {
             trigger={null}
             collapsible
             collapsed={collapsed}
+            collapsedWidth={120}
             width={256}
             className={styles.sider}
           >
@@ -177,14 +178,16 @@ export default class MainCtl extends React.Component {
             </Header>
             <Content className={styles.content}>
               <Switch>
-                <Route exact path='/home/productManager' component={require('../task_pools/TaskPoolsCtl').default} />
+                <Route exact path='/home/productManager' component={require('../product_manager/ProductManCtl').default} />
+                <Route exact path='/home/productForm' component={require('../product_manager/product_main/ProductManFormCtl').default} />
+
                 {/* <Route exact path='/home/myTask/:tab?' component={require('../my_task/MyTaskCtl').default} />
                 <Route exact path='/home/creditGrantingAudit/:flowInstanceId/:tab' component={require('../credit_granting_audit/CreditGrantingAuditCtl').default} /> */}
-                <Route exact path='/home/orderManager' component={require('../order_query/OrderQueryCtl').default} />
-                <Route exact path='/home/reportManager' component={require('../distribution/DistributionCtl').default} />
-                <Route exact path='/home/supplierManager' component={require('../review/ReviewCtl').default} />
-                <Route exact path='/home/staffManager' component={require('../review/ReviewCtl').default} />
-                <Route exact path='/home/systemManager' component={require('../review/ReviewCtl').default} />
+                <Route exact path='/home/orderManager' component={require('../order_manager/OrderManCtl').default} />
+                <Route exact path='/home/reportManager' component={require('../report_manager/ReportManCtl').default} />
+                <Route exact path='/home/supplierManager' component={require('../supplier_manager/SupplierManCtl').default} />
+                <Route exact path='/home/staffManager' component={require('../staff_manager/StaffManCtl').default} />
+                {/* <Route exact path='/home/systemManager' component={require('../system_manager/ReviewCtl').default} /> */}
 
                 {/* <Route exact path='/products' component={require('../product/ProductListCtl').default} />
                 <Route exact path='/products/add' component={dynamicCtl(() => import('../product/AddProductCtl'))} />

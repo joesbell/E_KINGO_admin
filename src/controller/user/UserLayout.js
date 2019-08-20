@@ -1,9 +1,9 @@
-import React, { Component, Fragment } from 'react'
+import React, { Component } from 'react'
 import { Link } from '@symph/joy/router'
-import { Icon } from 'antd'
+// import { Icon } from 'antd'
 // import GlobalFooter from 'ant-design-pro/lib/GlobalFooter'
 import styles from './UserLayout.less'
-import logo from './assets/logo.svg'
+import logo from './assets/logo.png'
 
 // const links = [
 //   {
@@ -45,10 +45,9 @@ export default class UserLayout extends Component {
               <div className={styles.header}>
                 <Link to='/'>
                   <img alt='logo' className={styles.logo} src={logo} />
-                  <span className={styles.title}>后台管理系统</span>
                 </Link>
               </div>
-              <div className={styles.desc}>东创建国 2019</div>
+              <div className={styles.desc}>后台管理系统 2019</div>
             </div>
             {children}
           </div>

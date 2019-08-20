@@ -17,7 +17,7 @@ const SUCCESS_CODE = '000000'
  */
 export const commonParams = {}
 
-export function setCommonParams(params) {
+export function setCommonParams (params) {
   Object.assign(commonParams, params)
 }
 
@@ -28,19 +28,19 @@ export const commonHeader = {
   'X-Requested-With': 'XMLHttpRequest'
 }
 
-export function setCommonHeader(params) {
+export function setCommonHeader (params) {
   Object.assign(commonHeader, params)
 }
 
 export class ApiError {
-  constructor(request, response, code, message) {
+  constructor (request, response, code, message) {
     this.request = request
     this.response = response
     this.code = code
     this.message = message
   }
 
-  toString() {
+  toString () {
     return '(' + this.code + ', ' + this.message + ')'
   }
 }
@@ -53,7 +53,7 @@ export class ApiError {
  * @param responseBodyType
  * @returns {*}
  */
-function _callApi(url, params, { method = 'POST', responseBodyType = 'json' } = {}) {
+function _callApi (url, params, { method = 'POST', responseBodyType = 'json' } = {}) {
   let body = null
   if (method === 'POST' || method === 'PUT') {
     body = JSON.stringify(params)
@@ -153,7 +153,7 @@ function _callApi(url, params, { method = 'POST', responseBodyType = 'json' } = 
  * @param options {method="POST", responseBodyType = 'json'}
  * @returns {Promise.<TResult>} 正常响应返回{requst, respone,data}对象，出现异常返回error对象{request,response, code, message}
  */
-export function callApi(url, params, { method = 'POST', responseBodyType = 'json' } = {}) {
+export function callApi (url, params, { method = 'POST', responseBodyType = 'json' } = {}) {
   if (!/https?:\/\//i.test(url)) {
     url = apiPath + url
   }
@@ -234,7 +234,7 @@ class ErrorHandler {
    * @param httpStatus http 状态吗，优先匹配errorCode
    * @param handleFunc function(ApiError)； 返回true会阻止error的传播
    */
-  constructor(errorCode, httpStatus, handleFunc) {
+  constructor (errorCode, httpStatus, handleFunc) {
     this.errorCode = errorCode
     this.httpStatus = httpStatus
     this.handleFunc = handleFunc
@@ -243,7 +243,7 @@ class ErrorHandler {
 
 export const _errorHandlers = []
 
-export function registErrorHandler(errorCode, httpStatus, handleFunc) {
+export function registErrorHandler (errorCode, httpStatus, handleFunc) {
   if ((errorCode === undefined || errorCode === null) && (httpStatus === undefined || httpStatus === null)) {
     throw new Error('oen of errorCode and httpStatus can not be emtpy')
   }
@@ -251,7 +251,7 @@ export function registErrorHandler(errorCode, httpStatus, handleFunc) {
   _errorHandlers.push(handler)
 }
 
-export function notifyErrorHandlers(error) {
+export function notifyErrorHandlers (error) {
   if (!error) {
     return
   }

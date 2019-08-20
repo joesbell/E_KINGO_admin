@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
-import controller from '@symph/joy/controller'
+// import controller from '@symph/joy/controller'
 import autowire from '@symph/joy/autowire'
-import { Checkbox, Alert, Icon, message } from 'antd'
+import { message } from 'antd'
 import Login from 'ant-design-pro/lib/Login'
 import 'ant-design-pro/lib/Login/style'
 import styles from './LoginCtl.less'
@@ -80,7 +80,7 @@ class LoginPage extends Component {
 
   render () {
     // const { login, submitting } = this.props
-    const { type, submitting, autoLogin } = this.state
+    const { type, submitting } = this.state
     return (
       <UserLayout>
         <div className={styles.main}>

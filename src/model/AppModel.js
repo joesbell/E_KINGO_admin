@@ -67,7 +67,7 @@ export default class AppModel {
         }
         if (item.url === IndexMenuUrl) {
           console.log(item.url, IndexMenuUrl)
-          
+
           indexMenu = item
         }
       })

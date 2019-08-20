@@ -8,11 +8,11 @@ class SearchForm extends Component {
   static defaultProps = {
     labelCol: {
       md: { span: 24 },
-      lg: { span: 8 }
+      lg: { span: 0 }
     },
     wrapperCol: {
       md: { span: 24 },
-      lg: { span: 16 }
+      lg: { span: 24 }
     }
   }
 
@@ -29,14 +29,14 @@ class SearchFormRow extends Row {
 
 class SearchFormCol extends Col {
   static defaultProps = {
-    xs: 24, sm: 12, md: 12, lg: 8, xl: 8, xxl: 8
+    xs: 24, sm: 24, md: 24, lg: 6, xl: 6, xxl: 6
   }
 }
 
 class ActionsItem extends Component {
   render () {
     return (
-      <Col xs={24} sm={24} md={24} lg={24} xl={24} xxl={24}>
+      <Col xs={24} sm={24} md={24} lg={18} xl={18} xxl={18}>
         <Form.Item {...this.props} className={classnames(['search-form-actions-item-block', this.props.className])} />
       </Col>
     )
