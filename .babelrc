@@ -1,0 +1,25 @@
+{
+  "presets": [
+    "@symph/joy/babel"
+  ],
+  "plugins": [
+    [
+      "import",
+      {
+        "libraryName": "antd",
+        "style": true
+      },
+      "import-ant"
+    ],
+    [
+      "import",
+      {
+        "libraryName": "ant-design-pro",
+        "libraryDirectory": "lib",
+        "style": true,
+        "camel2DashComponentName": false
+      },
+      "import-ant-design-pro"
+    ]
+  ]
+}

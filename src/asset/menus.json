@@ -1,0 +1,55 @@
+{
+  "resultCode": "0000",
+  "resultMsg": "success",
+  "resultData": [
+    {
+      "code": "home",
+      "icon": null,
+      "name": "home",
+      "url": "/home",
+      "parent": null
+    },
+    {
+      "code": "/home/productManager",
+      "icon": "icon://antd/bank",
+      "name": "商品管理",
+      "url": "/home/productManager",
+      "parent": "home"
+    },
+    {
+      "code": "/home/orderManager",
+      "icon": "icon://antd/bank",
+      "name": "订单管理",
+      "url": "/home/orderManager",
+      "parent": "home"
+    },
+    {
+      "code": "/home/reportManager",
+      "icon": "icon://antd/appstore",
+      "name": "报表管理",
+      "url": "/home/reportManager",
+      "parent": "home"
+    },
+    {
+      "code": "/home/supplierManager",
+      "icon": "icon://antd/user",
+      "name": "供货商管理",
+      "url": "/home/supplierManager",
+      "parent": "home"
+    },
+    {
+      "code": "/home/staffManager",
+      "icon": "icon://antd/money-collect",
+      "name": "员工管理",
+      "url": "/home/staffManager",
+      "parent": "home"
+    },
+    {
+      "code": "/home/systemManager",
+      "icon": "icon://antd/deployment-unit",
+      "name": "系统管理",
+      "url": "/home/systemManager",
+      "parent": "home"
+    }
+  ]
+}
