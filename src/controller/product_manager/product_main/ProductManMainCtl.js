@@ -94,22 +94,21 @@ export default class ProductManMainCtl extends Component {
   // @autowire()
   // todoTaskModel: TodoTaskModel
   fetchData = (pageNum, pageSize) => {
-    this.searchTPForm.props.form.validateFields(async (err, fieldsValue) => {
+    this.searchPMForm.props.form.validateFields(async (err, fieldsValue) => {
       if (err) {
         return
       }
-      // let values = {
-      //   ...fieldsValue,
-      //   startDate: fmtDate(fieldsValue['startDate'], 'YYYY-MM-DD 00:00:00'),
-      //   endDate: fmtDate(fieldsValue['endDate'], 'YYYY-MM-DD 23:59:59')
-      // }
+      let values = {
+        ...fieldsValue
+      }
+      console.log(values)
 
       try {
         this.setState({
           isLoading: true
         })
 
-        // await this.taskPoolsModel.fetchTaskPoolsData({ pageNum, pageSize, searchArgs: values })
+        await this.taskPoolsModel.fetchTaskPoolsData({ pageNum, pageSize, searchArgs: values })
       } catch (e) {
         message.error(e.message || '出错了，请重试')
       }
@@ -158,7 +157,7 @@ export default class ProductManMainCtl extends Component {
     const { pageNum, pageSize, totalCount } = this.props
     return (
       <div>
-        <SearchProMainForm onSubmit={this.onSubmitSearch} formRef={(form) => { this.searchTPForm = form }} />
+        <SearchProMainForm onSubmit={this.onSubmitSearch} formRef={(form) => { this.searchPMForm = form }} />
         <Table scroll={{ x: 'max-content' }} dataSource={[]} columns={this.columns} bordered pagination={false} rowKey='id' loading={this.state.isLoading} />
         <Pagination size='small' onChange={this.onChangePage} total={totalCount} pageSize={pageSize} current={pageNum}
           showSizeChanger showQuickJumper onShowSizeChange={this.onShowSizeChange} />

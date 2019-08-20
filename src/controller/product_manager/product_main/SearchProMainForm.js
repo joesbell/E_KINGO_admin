@@ -21,7 +21,7 @@ class ProMainForm extends Component {
   }
   addProduct = () => {
     this.props.history.push(
-      '/productForm?isRevise=false'
+      '/home/productForm?isRevise=false'
     )
   }
   render () {
@@ -50,7 +50,7 @@ class ProMainForm extends Component {
               </div>
               <div>
                 <Button style={{ marginLeft: '24px' }} type='primary' onClick={this.addProduct}>新增商品</Button>
-                <Button style={{ marginLeft: '24px' }} onClick={this.handleReset}>导入</Button>
+                {/* <Button style={{ marginLeft: '24px' }} onClick={this.handleReset}>导入</Button> */}
               </div>
             </div>
 

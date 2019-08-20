@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-// import { Steps } from 'antd'
+import { message } from 'antd'
 // import { Switch, Route } from '@symph/joy/router'
 // import controller from '@symph/joy/controller'
 import PageHeader from '../../../component/PageHeader'
@@ -8,8 +8,10 @@ import PageHeader from '../../../component/PageHeader'
 // import TelVerificationCtl from './children/TelVerificationCtl'
 // import styles from './CreditGrantingAuditCtl.less'
 // import { parse } from 'querystring'
-// import styles from '../PublicManager.less'
 import { PageBodyCard } from '../../../component/Card'
+import SubmitProductManForm from './ProductManForm'
+// import styles from '../ProductManCtl.less'
+
 // const { Step } = Steps
 
 // const Tabs = [{
@@ -37,11 +39,35 @@ import { PageBodyCard } from '../../../component/Card'
 // })
 
 export default class ProductManForm extends Component {
-  // onTabChange = (key) => {
-  //   this.props.history.replace(`/creditGrantingAudit/${encodeURI(this.props.flowInstanceId)}/${key}${window.location.search}`)
-  // }
   goBack = async () => {
     await this.props.history.goBack()
+  }
+  onCancle=() => {
+    this.props.history.goBack()
+  }
+  onSubmitSearch = async () => {
+    this.SubmitPMForm.props.form.validateFields(async (err, fieldsValue) => {
+      if (err) {
+        return
+      }
+      let values = {
+        ...fieldsValue
+      }
+      console.log(values)
+
+      try {
+        this.setState({
+          isLoading: true
+        })
+
+        // await this.taskPoolsModel.fetchTaskPoolsData({ pageNum, pageSize, searchArgs: values })
+      } catch (e) {
+        message.error(e.message || '出错了，请重试')
+      }
+      this.setState({
+        isLoading: false
+      })
+    })
   }
   render () {
     return (
@@ -50,17 +76,12 @@ export default class ProductManForm extends Component {
           onBack={this.goBack}
           className='tabs'
           title={<span className='title'>新增商品</span>}
-        // tabList={Tabs}
-        // tabActiveKey={this.props.tabKey}
-        // onTabChange={this.onTabChange}
         />
         <PageBodyCard>
-          新增商品
-          {/* <Switch>
-            <Route path={'/creditGrantingAudit/:id/auditMsg'} exact component={AuditMsgCtl} />
-            <Route path={'/creditGrantingAudit/:id/applyInfo'} exact component={ApplyInfoCtl} />
-            <Route path={'/creditGrantingAudit/:id/telVerification'} exact component={TelVerificationCtl} />
-          </Switch> */}
+          {/* <div className={styles.SubmitProductManFormBox}> */}
+          <SubmitProductManForm onSubmit={this.onSubmitSearch} onCancle={this.onCancle} formRef={(form) => { this.SubmitPMForm = form }} />
+
+          {/* </div> */}
         </PageBodyCard>
       </div>
     )
