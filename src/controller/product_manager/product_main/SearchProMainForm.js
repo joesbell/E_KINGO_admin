@@ -1,10 +1,10 @@
 import React, { Component } from 'react'
 // import controller from '@symph/joy/controller'
 // import autowire from '@symph/joy/autowire'
-import SearchForm, { Row, Col, ActionsItem } from '../../../component/SearchForm'
+import SearchForm, { Row, Col } from '../../../component/SearchForm'
 import Form from '../../../component/Form'
-import { Button, Input } from 'antd'
-
+import { Button, Input, Select } from 'antd'
+const { Option } = Select
 class ProMainForm extends Component {
   onSubmit = (e) => {
     e.preventDefault()
@@ -32,14 +32,32 @@ class ProMainForm extends Component {
         <Row>
           <Col>
             <Form.Item
+              label='商品名称'
+              labelAlign='left'
             >
               {
-                getFieldDecorator('customerName')(<Input allowClear placeholder='商品名称' />)
+                getFieldDecorator('customerName')(<Input allowClear placeholder='请输入' />)
               }
             </Form.Item>
           </Col>
-          <ActionsItem>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <Col>
+            <Form.Item
+              label='商品状态'
+              labelAlign='left'
+            >
+              {
+                getFieldDecorator('flowType', {
+                })(<Select placeholder='全部' allowClear>
+                  {/* <Option key="" >全部</Option> */}
+                  <Option key='0' >上线</Option>
+                  <Option key='1' >下线</Option>
+                </Select>)
+
+              }
+            </Form.Item>
+          </Col>
+          <Col xs={24} sm={24} md={24} lg={12} xl={12} xxl={12}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '4px' }}>
               <div>
                 <Button
                   type='primary'
@@ -53,8 +71,7 @@ class ProMainForm extends Component {
                 {/* <Button style={{ marginLeft: '24px' }} onClick={this.handleReset}>导入</Button> */}
               </div>
             </div>
-
-          </ActionsItem>
+          </Col>
 
         </Row>
       </SearchForm>
