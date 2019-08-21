@@ -19,6 +19,11 @@ class OrderMainForm extends Component {
       this.props.onSubmit()
     }
   }
+  go = () => {
+    this.props.history.push(
+      `/home/orderManager/orderProDetail`
+    )
+  }
   addProduct = () => {
     this.props.history.push(
       '/home/productForm?isRevise=false'
@@ -69,6 +74,7 @@ class OrderMainForm extends Component {
           <Col>
             <Form.Item
               label='下单时间'
+              labelAlign='left'
               style={{ marginBottom: 0 }}
             >
               <Form.Item
@@ -96,8 +102,8 @@ class OrderMainForm extends Component {
               </Form.Item>
             </Form.Item>
           </Col>
-          <Col xs={24} sm={24} md={24} lg={12} xl={12} xxl={12}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '4px' }}>
+          <Col xs={24} sm={24} md={24} lg={24} xl={24} xxl={24}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '4px', marginBottom: '10px' }}>
               <div>
                 <Button
                   type='primary'
@@ -108,8 +114,8 @@ class OrderMainForm extends Component {
               </div>
               <div>
                 <Button style={{ marginLeft: '24px' }} type='primary' onClick={this.addProduct}>确认收货</Button>
-                <Button style={{ marginLeft: '24px' }} type='error' onClick={this.addProduct}>删除</Button>
-                <Button style={{ marginLeft: '24px' }} type='primary' disabled={!this.props.hasSelected} loading={this.props.loading} onClick={this.addProduct}>导出</Button>
+                <Button style={{ marginLeft: '24px' }} type='danger' disabled={!this.props.hasSelected} loading={this.props.loading} onClick={this.addProduct}>删除</Button>
+                <Button style={{ marginLeft: '24px' }} type='primary' onClick={this.go}>导出</Button>
 
                 {/* <Button style={{ marginLeft: '24px' }} onClick={this.handleReset}>导入</Button> */}
               </div>

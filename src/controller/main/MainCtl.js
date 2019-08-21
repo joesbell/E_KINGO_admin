@@ -179,12 +179,15 @@ export default class MainCtl extends React.Component {
             <Content className={styles.content}>
               <Switch>
                 <Route exact path='/home/productManager' component={require('../product_manager/ProductManCtl').default} />
-                <Route exact path='/home/productForm' component={require('../product_manager/product_main/ProductManFormCtl').default} />
+                <Route exact path='/home/productManager/productForm' component={require('../product_manager/product_main/ProductManFormCtl').default} />
 
                 {/* <Route exact path='/home/myTask/:tab?' component={require('../my_task/MyTaskCtl').default} />
                 <Route exact path='/home/creditGrantingAudit/:flowInstanceId/:tab' component={require('../credit_granting_audit/CreditGrantingAuditCtl').default} /> */}
                 <Route exact path='/home/orderManager' component={require('../order_manager/OrderManCtl').default} />
-                <Route exact path='/home/reportManager' component={require('../report_manager/ReportManCtl').default} />
+                <Route exact path='/home/orderManager/orderProDetail' component={require('../order_manager/order_main/OrderProDetailCtl').default} />
+                <Route exact path='/home/orderManager/orderDetail' component={require('../order_manager/order_main/OrderDetailCtl').default} />
+
+                <Route exact path='/home/reportManager/:tab?' component={require('../report_manager/ReportManCtl').default} />
                 <Route exact path='/home/supplierManager' component={require('../supplier_manager/SupplierManCtl').default} />
                 <Route exact path='/home/staffManager' component={require('../staff_manager/StaffManCtl').default} />
                 {/* <Route exact path='/home/systemManager' component={require('../system_manager/ReviewCtl').default} /> */}

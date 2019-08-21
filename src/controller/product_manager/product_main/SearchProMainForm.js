@@ -21,7 +21,7 @@ class ProMainForm extends Component {
   }
   addProduct = () => {
     this.props.history.push(
-      '/home/productForm?isRevise=false'
+      '/home/productManager/productForm?isRevise=false'
     )
   }
   render () {
@@ -56,8 +56,8 @@ class ProMainForm extends Component {
               }
             </Form.Item>
           </Col>
-          <Col xs={24} sm={24} md={24} lg={12} xl={12} xxl={12}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '4px' }}>
+          <Col xs={24} sm={24} md={24} lg={12} xl={8} xxl={12}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '4px', marginBottom: '10px' }}>
               <div>
                 <Button
                   type='primary'

@@ -36,7 +36,14 @@ export default class OrderMainCtl extends Component {
       },
       {
         title: 'Age',
-        dataIndex: 'age'
+        dataIndex: 'age',
+        render: (text, record, index) => {
+          return (
+            <span onClick={() => this.props.history.push(
+              `/home/productManager/productForm?id=$`
+            )} style={{ color: 'red', cursor: 'pointer' }}>{record.age}</span>
+          )
+        }
       },
       {
         title: 'Address',
@@ -49,11 +56,11 @@ export default class OrderMainCtl extends Component {
           return (
             <div>
               <span>
-                <a href='javascript:;' onClick={() => this.goDetail(record)}>修改</a>
+                <a href='javascript:;' onClick={() => this.goDetail(record)}>确认收货</a>
               </span>
               <Divider type={'vertical'} />
               <span>
-                <a href='javascript:;' onClick={() => this.offline(record)} >下线</a>
+                <a href='javascript:;' onClick={() => this.offline(record)} >删除</a>
               </span>
             </div>
 
@@ -66,7 +73,13 @@ export default class OrderMainCtl extends Component {
   // taskPoolsModel: TaskPoolsModel
   // @autowire()
   // todoTaskModel: TodoTaskModel
+  goProDetail=(age) => {
+    console.log(age)
 
+    this.props.history.push(
+      `/home/productManager/productForm?id=$`
+    )
+  }
   start = () => {
     this.setState({ loading: true })
     // ajax request after empty completing
