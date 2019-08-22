@@ -42,7 +42,7 @@ if (NODE_ENV === 'debug') {
     assetPrefix: '/',
     // apiPath: 'http://172.24.5.10:3000/mock/78'
     // apiPath: 'http://10.222.10.63:8086/manage'
-    apiPath: 'http://10.222.10.71:8889'
+    apiPath: 'http://118.24.50.239:8181'
 
   }
 }

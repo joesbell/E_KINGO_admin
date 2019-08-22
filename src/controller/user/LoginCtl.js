@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-// import controller from '@symph/joy/controller'
+import controller from '@symph/joy/controller'
 import autowire from '@symph/joy/autowire'
 import { message } from 'antd'
 import Login from 'ant-design-pro/lib/Login'
@@ -10,10 +10,10 @@ import UserModel from '../../model/UserModel'
 
 const { Tab, UserName, Password, Submit } = Login
 
-// @controller((store) => ({
-//   login: true,
-//   submitting: true
-// }))
+@controller(({ user }) => ({
+  token: user.token,
+  userName: user.userName
+}))
 class LoginPage extends Component {
   // state={
   //   login: true,
@@ -56,9 +56,12 @@ class LoginPage extends Component {
       this.setState({
         submitting: true
       })
-      console.log({ ...values })
-      this.props.history.push('/home')
-      // await this.haveTaskModel.fetchHaveTaskData({ pageNum, pageSize, searchArgs: values })
+      let userObj = {
+        'loginName': values.loginName,
+        'password': values.password
+      }
+      await this.userModel.login(userObj)
+      // await this.props.history.push('/home')
     } catch (e) {
       message.error(e.message || '出错了，请重试')
     }
@@ -96,12 +99,16 @@ class LoginPage extends Component {
               login.type === 'account' &&
               !submitting && '用户名或密码错误'} */}
               <UserName
-                name='userName'
-                placeholder={`用户名`}
+                name='loginName'
+                placeholder={`手机号`}
                 rules={[
                   {
                     required: true,
                     message: '请输入用户名'
+                  }, {
+                    pattern: /^1(3|4|5|6|7|8|9)\d{9}$/,
+                    message: '请输入正确手机号'
+
                   }
                 ]}
               />

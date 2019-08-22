@@ -17,8 +17,14 @@ export default class UserModel {
     })
   }
 
-  async login ({ loginUrl }) {
-    window.location.href = loginUrl
+  // async login ({ loginUrl }) {
+  //   window.location.href = loginUrl
+  // }
+  async login (user) {
+    let { data: { data } } = await callApi('/userLogin', { ...user }, { method: 'POST' })
+    this.setState({
+      ...data
+    })
   }
 
   async logout () {
