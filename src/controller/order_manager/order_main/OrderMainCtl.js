@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-// import controller from '@symph/joy/controller'
+import controller from '@symph/joy/controller'
 // import autowire from '@symph/joy/autowire'
 // import { fmtDate } from '../../../util/dateUtils'
 import { Table, Pagination, message, Divider, Modal } from 'antd'
@@ -8,10 +8,6 @@ import { Table, Pagination, message, Divider, Modal } from 'antd'
 import SearchOrderMainForm from './OrderMainForm'
 const { confirm } = Modal
 
-// @controller(({ }) => {
-//   return {
-//   }
-// })
 const data = []
 for (let i = 0; i < 46; i++) {
   data.push({
@@ -21,6 +17,11 @@ for (let i = 0; i < 46; i++) {
     address: `London, Park Lane no. ${i}`
   })
 }
+@controller(({ state }) => {
+  return {
+    op: state.op
+  }
+})
 export default class OrderMainCtl extends Component {
   constructor () {
     super(...arguments)
@@ -39,9 +40,7 @@ export default class OrderMainCtl extends Component {
         dataIndex: 'age',
         render: (text, record, index) => {
           return (
-            <span onClick={() => this.props.history.push(
-              `/home/productManager/productForm?id=$`
-            )} style={{ color: 'red', cursor: 'pointer' }}>{record.age}</span>
+            <div onClick={() => this.goProDetail(record)} style={{ color: 'red', cursor: 'pointer' }}>{record.age}</div>
           )
         }
       },
@@ -56,7 +55,7 @@ export default class OrderMainCtl extends Component {
           return (
             <div>
               <span>
-                <a href='javascript:;' onClick={() => this.goDetail(record)}>确认收货</a>
+                <a href='javascript:;' onClick={() => this.Detail(record)}>确认收货</a>
               </span>
               <Divider type={'vertical'} />
               <span>
@@ -73,13 +72,7 @@ export default class OrderMainCtl extends Component {
   // taskPoolsModel: TaskPoolsModel
   // @autowire()
   // todoTaskModel: TodoTaskModel
-  goProDetail=(age) => {
-    console.log(age)
 
-    this.props.history.push(
-      `/home/productManager/productForm?id=$`
-    )
-  }
   start = () => {
     this.setState({ loading: true })
     // ajax request after empty completing
@@ -90,7 +83,14 @@ export default class OrderMainCtl extends Component {
       })
     }, 1000)
   };
+  goProDetail = (record) => {
+    // console.log(record)
+    this.props.history.push(
+      `/home/orderManager/orderProDetail`
+    )
 
+    // this.dispatch(routerRedux.push(`/home/orderManager/orderProDetail?${record.age}`))
+  };
   onSelectChange = selectedRowKeys => {
     console.log('selectedRowKeys changed: ', selectedRowKeys)
     this.setState({ selectedRowKeys })
