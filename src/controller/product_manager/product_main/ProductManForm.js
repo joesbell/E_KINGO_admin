@@ -3,6 +3,8 @@ import controller from '@symph/joy/controller'
 // import autowire from '@symph/joy/autowire'
 import SubmitForm, { Row, Col, ActionsItem } from '../../../component/SubmitForm'
 import Form from '../../../component/Form'
+import InputSelect from '../../../component/InputSelect'
+
 import { Button, Input, DatePicker, Select, Upload, Icon, Modal } from 'antd'
 const { Option } = Select
 const labelCol = {
@@ -29,7 +31,7 @@ function getBase64 (file) {
 
 @controller(({ sup }, { match }) => {
   return {
-    supRecords: sup.records
+    AllSupplier: sup.AllSupplier
   }
 })
 class ProductManForm extends Component {
@@ -60,7 +62,9 @@ class ProductManForm extends Component {
       this.props.onSubmit()
     }
   }
-
+  setValue=(value) => {
+    this.props.form.setFieldsValue({ 'category': value })
+  }
   handleReset = async () => {
     await this.props.form.resetFields()
     await this.props.onCancle()
@@ -76,7 +80,7 @@ class ProductManForm extends Component {
       </div>
     )
     return (
-      <SubmitForm onSubmit={this.onSubmit}>
+      <SubmitForm autoComplete='off' onSubmit={this.onSubmit}>
         <Row>
           <Col>
             <Form.Item
@@ -99,7 +103,7 @@ class ProductManForm extends Component {
                       message: '不能为空'
                     }
                   ]
-                })(<Input allowClear />)
+                })(<InputSelect setValue={this.setValue} />)
               }
             </Form.Item>
           </Col>
@@ -238,10 +242,10 @@ class ProductManForm extends Component {
           </Col>
           <Col>
             <Form.Item
-              label='供货商名称'
+              label='供货商'
             >
               {
-                getFieldDecorator('flowType', {
+                getFieldDecorator('supplerId', {
                   rules: [
                     {
                       required: true,
@@ -249,29 +253,8 @@ class ProductManForm extends Component {
                     }
                   ]
                 })(<Select placeholder='请选择' onChange={this.handleAuditChange} allowClear>
-                  {(this.props.supRecords || []).map(el => (
-                    <Option key={el.name} >{el.name}</Option>
-                  ))}
-                </Select>)
-
-              }
-            </Form.Item>
-          </Col>
-          <Col>
-            <Form.Item
-              label='供货商电话'
-            >
-              {
-                getFieldDecorator('flowType', {
-                  rules: [
-                    {
-                      required: true,
-                      message: '不能为空'
-                    }
-                  ]
-                })(<Select placeholder='请选择' onChange={this.handleAuditChange} allowClear>
-                  {(this.props.supRecords || []).map(el => (
-                    <Option key={el.phone} >{el.phone}</Option>
+                  {(this.props.AllSupplier || []).map(el => (
+                    <Option key={el.id} >{el.name}--{el.phone}</Option>
                   ))}
                 </Select>)
 

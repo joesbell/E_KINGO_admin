@@ -6,8 +6,8 @@ export default class ProModel {
   namespace = 'pro'
 
   initState = {
-    curPage: 1,
-    pageSize: 10
+    current: 1,
+    size: 10
   }
 
   async fetchProData (val) {
@@ -15,5 +15,12 @@ export default class ProModel {
     this.setState({
       ...data
     })
+  }
+  async addPro (val) {
+    await callApi('/goods/insert', { ...val }, { method: 'POST' })
+  }
+  // 商品分类
+  async proCategory (name) {
+    await callApi('/mallCommon/queryCategory', { ...name }, { method: 'POST' })
   }
 }

@@ -20,7 +20,7 @@ export default class SupplierModel {
   async fetchAllSupplier () {
     let { data: { data } } = await callApi('/mallCommon/querySuppler', {}, { method: 'POST' })
     this.setState({
-      ...data
+      AllSupplier: data
     })
   }
 }

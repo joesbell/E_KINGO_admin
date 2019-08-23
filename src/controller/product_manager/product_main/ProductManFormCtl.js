@@ -1,10 +1,13 @@
 import React, { Component } from 'react'
 import { message } from 'antd'
+import { fmtDate } from '../../../util/dateUtils'
+
 // import { Switch, Route } from '@symph/joy/router'
 import controller from '@symph/joy/controller'
 import autowire from '@symph/joy/autowire'
 import PageHeader from '../../../component/PageHeader'
 import SupplierModel from '../../../model/SupplierModel'
+import ProModel from '../../../model/ProModel'
 import { PageBodyCard } from '../../../component/Card'
 import SubmitProductManForm from './ProductManForm'
 
@@ -16,12 +19,15 @@ import SubmitProductManForm from './ProductManForm'
 export default class ProductManForm extends Component {
   @autowire()
   supplierModel: SupplierModel
-
+  @autowire()
+  proModel: ProModel
   async componentDidMount () {
     await this.supplierModel.fetchAllSupplier()
+    await this.proModel.proCategory()
   }
 
   goBack = async () => {
+    await this.SubmitPMForm.props.form.resetFields()
     await this.props.history.goBack()
   }
   onCancle = () => {
@@ -38,7 +44,9 @@ export default class ProductManForm extends Component {
       })
       let values = {
         ...fieldsValue,
-        paths: paths
+        paths: paths,
+        onlineStartDate: fmtDate(fieldsValue['onlineStartDate'], 'YYYY-MM-DD 00:00:00'),
+        onlineEndDate: fmtDate(fieldsValue['onlineEndDate'], 'YYYY-MM-DD 23:59:59')
       }
       console.log(values)
 
@@ -47,7 +55,7 @@ export default class ProductManForm extends Component {
           isLoading: true
         })
 
-        // await this.taskPoolsModel.fetchTaskPoolsData({ pageNum, pageSize, searchArgs: values })
+        await this.proModel.addPro({ ...values })
       } catch (e) {
         message.error(e.message || '出错了，请重试')
       }

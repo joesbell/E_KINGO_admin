@@ -11,8 +11,9 @@ const { confirm } = Modal
 
 @controller(({ pro }) => {
   return {
-    curPage: pro.curPage,
-    pageSize: pro.pageSize,
+    current: pro.current,
+    size: pro.size,
+    total: pro.total,
     records: pro.records
   }
 })
@@ -36,7 +37,12 @@ export default class ProductManMainCtl extends Component {
       {
         title: '商品名称',
         dataIndex: 'name',
-        key: 'name'
+        key: 'name',
+        render: (text) => {
+          return (
+            <span style={{ color: '#1890ff', cursor: 'pointer' }}>{text}</span>
+          )
+        }
       },
       {
         title: '零售价',
@@ -68,9 +74,15 @@ export default class ProductManMainCtl extends Component {
         dataIndex: 'status',
         key: 'status',
         render: (text) => {
-          return (
-            <span>{constUtils.getItemName(proStatus, text)}</span>
-          )
+          if (text === 0) {
+            return (
+              <span style={{ color: '#ff7875' }}>{constUtils.getItemName(proStatus, text)}</span>
+            )
+          } else {
+            return (
+              <span >{constUtils.getItemName(proStatus, text)}</span>
+            )
+          }
         }
 
       },
@@ -85,7 +97,7 @@ export default class ProductManMainCtl extends Component {
               </span>
               <Divider type={'vertical'} />
               <span>
-                <a href='javascript:;' onClick={() => this.offline(record)} >下线</a>
+                <a href='javascript:;' onClick={() => this.offline(record)} >{record.status === 0 ? '上线' : '下线'}</a>
               </span>
             </div>
 
@@ -98,7 +110,7 @@ export default class ProductManMainCtl extends Component {
   // taskPoolsModel: TaskPoolsModel
   @autowire()
   proModel: ProModel
-  fetchData = (curPage, pageSize) => {
+  fetchData = (current, size) => {
     this.searchPMForm.props.form.validateFields(async (err, fieldsValue) => {
       if (err) {
         return
@@ -112,7 +124,7 @@ export default class ProductManMainCtl extends Component {
           isLoading: true
         })
 
-        await this.proModel.fetchProData({ curPage, pageSize, ...values })
+        await this.proModel.fetchProData({ current, size, ...values })
       } catch (e) {
         message.error(e.message || '出错了，请重试')
       }
@@ -128,10 +140,10 @@ export default class ProductManMainCtl extends Component {
   }
   offline = async (record) => {
     confirm({
-      title: '确定下线此商品?',
-      content: 'Some descriptions',
+      title: record.status === 0 ? '上线' : '下线',
+      content: `确定${record.status === 0 ? '上线' : '下线'}${record.name}?`,
       okText: '确定',
-      okType: 'danger',
+      okType: record.status === 0 ? 'primary' : 'danger',
       cancelText: '取消',
       onOk () {
         console.log('OK')
@@ -142,28 +154,28 @@ export default class ProductManMainCtl extends Component {
     })
   }
   async componentDidMount () {
-    const { curPage, pageSize } = this.props
-    await this.fetchData(curPage, pageSize)
+    const { current, size } = this.props
+    await this.fetchData(current, size)
   }
 
   onSubmitSearch = async () => {
-    const { pageSize } = this.props
-    this.fetchData(1, pageSize)
+    const { size } = this.props
+    this.fetchData(1, size)
   }
-  onChangePage = (curPage, pageSize) => {
-    this.fetchData(curPage, pageSize)
+  onChangePage = (current, size) => {
+    this.fetchData(current, size)
   }
-  onShowSizeChange = (curPage, pageSize) => {
-    curPage = 1
-    this.fetchData(curPage, pageSize)
+  onShowSizeChange = (current, size) => {
+    current = 1
+    this.fetchData(current, size)
   }
   render () {
-    const { curPage, pageSize, totalCount, records } = this.props
+    const { current, size, total, records } = this.props
     return (
       <div>
         <SearchProMainForm onSubmit={this.onSubmitSearch} formRef={(form) => { this.searchPMForm = form }} />
         <Table scroll={{ x: 'max-content' }} dataSource={records} columns={this.columns} bordered pagination={false} rowKey={(record) => { return `${record.name}index` }} loading={this.state.isLoading} />
-        <Pagination size='small' onChange={this.onChangePage} total={totalCount} pageSize={pageSize} current={curPage}
+        <Pagination size='small' onChange={this.onChangePage} total={total} pageSize={size} current={current}
           showSizeChanger showQuickJumper onShowSizeChange={this.onShowSizeChange} />
       </div>
     )

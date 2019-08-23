@@ -28,7 +28,7 @@ class ProMainForm extends Component {
     const { form } = this.props
     const { getFieldDecorator } = form
     return (
-      <SearchForm onSubmit={this.onSubmit}>
+      <SearchForm autoComplete='off' onSubmit={this.onSubmit}>
         <Row>
           <Col>
             <Form.Item
