@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-// import controller from '@symph/joy/controller'
+import controller from '@symph/joy/controller'
 // import autowire from '@symph/joy/autowire'
 import SubmitForm, { Row, Col, ActionsItem } from '../../../component/SubmitForm'
 import Form from '../../../component/Form'
@@ -26,11 +26,12 @@ function getBase64 (file) {
     reader.onerror = error => reject(error)
   })
 }
-// @controller(({ state }) => {
-//   return {
 
-//   }
-// })
+@controller(({ sup }, { match }) => {
+  return {
+    supRecords: sup.records
+  }
+})
 class ProductManForm extends Component {
   state = {
     previewVisible: false,
@@ -71,7 +72,7 @@ class ProductManForm extends Component {
     const uploadButton = (
       <div>
         <Icon type='plus' />
-        <div className='ant-upload-text'>Upload</div>
+        <div className='ant-upload-text'>上传</div>
       </div>
     )
     return (
@@ -82,7 +83,7 @@ class ProductManForm extends Component {
               label='商品编号'
             >
               {
-                getFieldDecorator('customerName1')(<Input allowClear />)
+                getFieldDecorator('number')(<Input disabled placeholder='后台自动生成' allowClear />)
               }
             </Form.Item>
           </Col>
@@ -91,7 +92,14 @@ class ProductManForm extends Component {
               label='商品分类'
             >
               {
-                getFieldDecorator('customerName')(<Input allowClear />)
+                getFieldDecorator('category', {
+                  rules: [
+                    {
+                      required: true,
+                      message: '不能为空'
+                    }
+                  ]
+                })(<Input allowClear />)
               }
             </Form.Item>
           </Col>
@@ -100,7 +108,14 @@ class ProductManForm extends Component {
               label='商品名称'
             >
               {
-                getFieldDecorator('customerName')(<Input allowClear />)
+                getFieldDecorator('name', {
+                  rules: [
+                    {
+                      required: true,
+                      message: '不能为空'
+                    }
+                  ]
+                })(<Input allowClear />)
               }
             </Form.Item>
           </Col>
@@ -109,14 +124,22 @@ class ProductManForm extends Component {
               label='图片'
             >
               {
-                getFieldDecorator('customerName4')(<Upload
-                  action='https://www.mocky.io/v2/5cc8019d300000980a055e76'
+                getFieldDecorator('paths', {
+                  rules: [
+                    {
+                      required: true,
+                      message: '不能为空'
+                    }
+                  ]
+                })(<Upload
+                  action='http://118.24.50.239:8181/file/upload'
                   listType='picture-card'
+                  name='files'
                   fileList={fileList}
                   onPreview={this.handlePreview}
                   onChange={this.handleChange}
                 >
-                  {fileList.length >= 8 ? null : uploadButton}
+                  {fileList.length >= 3 ? null : uploadButton}
                 </Upload>)
               }
             </Form.Item>
@@ -126,7 +149,14 @@ class ProductManForm extends Component {
               label='成本价'
             >
               {
-                getFieldDecorator('customerName5')(<Input allowClear />)
+                getFieldDecorator('costPrice', {
+                  rules: [
+                    {
+                      required: true,
+                      message: '不能为空'
+                    }
+                  ]
+                })(<Input allowClear />)
               }
             </Form.Item>
           </Col>
@@ -135,7 +165,14 @@ class ProductManForm extends Component {
               label='零售价'
             >
               {
-                getFieldDecorator('customerName6')(<Input allowClear />)
+                getFieldDecorator('petailPrice', {
+                  rules: [
+                    {
+                      required: true,
+                      message: '不能为空'
+                    }
+                  ]
+                })(<Input allowClear />)
               }
             </Form.Item>
           </Col>
@@ -144,7 +181,14 @@ class ProductManForm extends Component {
               label='限购数量'
             >
               {
-                getFieldDecorator('customerName7')(<Input allowClear />)
+                getFieldDecorator('limitNum', {
+                  rules: [
+                    {
+                      required: true,
+                      message: '不能为空'
+                    }
+                  ]
+                })(<Input allowClear />)
               }
             </Form.Item>
           </Col>
@@ -157,23 +201,37 @@ class ProductManForm extends Component {
                 style={{ display: 'inline-block', width: 'calc(50% - 50px)' }}
               >
                 {
-                  getFieldDecorator('startDate', {})(
+                  getFieldDecorator('onlineStartDate', {
+                    rules: [
+                      {
+                        required: true,
+                        message: '不能为空'
+                      }
+                    ]
+                  })(
                     <DatePicker format={'YYYY.MM.DD'}
                       placeholder='起始时间'
                       disabledDate={d =>
-                        form.getFieldValue('endDate') && d.isAfter(form.getFieldValue('endDate'), 'day')}
+                        form.getFieldValue('onlineEndDate') && d.isAfter(form.getFieldValue('onlineEndDate'), 'day')}
                     />)
                 }
               </Form.Item>
               {/* <span style={{ display: 'inline-block', width: '20px', textAlign: 'center' }}>-</span> */}
               <Form.Item style={{ display: 'inline-block', width: 'calc(50% - 30px)' }}>
                 {
-                  getFieldDecorator('endDate', {})(
+                  getFieldDecorator('onlineEndDate', {
+                    rules: [
+                      {
+                        required: true,
+                        message: '不能为空'
+                      }
+                    ]
+                  })(
                     <DatePicker format={'YYYY.MM.DD'}
                       placeholder='结束时间'
 
                       disabledDate={d =>
-                        form.getFieldValue('startDate') && d.isBefore(form.getFieldValue('startDate', 'day'))} />)
+                        form.getFieldValue('onlineStartDate') && d.isBefore(form.getFieldValue('onlineStartDate', 'day'))} />)
                 }
               </Form.Item>
             </Form.Item>
@@ -184,9 +242,15 @@ class ProductManForm extends Component {
             >
               {
                 getFieldDecorator('flowType', {
+                  rules: [
+                    {
+                      required: true,
+                      message: '不能为空'
+                    }
+                  ]
                 })(<Select placeholder='请选择' onChange={this.handleAuditChange} allowClear>
-                  {[].map(el => (
-                    <Option key={el.value} >{el.text}</Option>
+                  {(this.props.supRecords || []).map(el => (
+                    <Option key={el.name} >{el.name}</Option>
                   ))}
                 </Select>)
 
@@ -199,9 +263,15 @@ class ProductManForm extends Component {
             >
               {
                 getFieldDecorator('flowType', {
+                  rules: [
+                    {
+                      required: true,
+                      message: '不能为空'
+                    }
+                  ]
                 })(<Select placeholder='请选择' onChange={this.handleAuditChange} allowClear>
-                  {[].map(el => (
-                    <Option key={el.value} >{el.text}</Option>
+                  {(this.props.supRecords || []).map(el => (
+                    <Option key={el.phone} >{el.phone}</Option>
                   ))}
                 </Select>)
 

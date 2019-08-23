@@ -3,9 +3,8 @@ import React, { Component } from 'react'
 // import autowire from '@symph/joy/autowire'
 import SearchForm, { Row, Col } from '../../../component/SearchForm'
 import Form from '../../../component/Form'
-import { Button, Input, Select } from 'antd'
-const { Option } = Select
-class ProMainForm extends Component {
+import { Button, Input } from 'antd'
+class SupplierSearchForm extends Component {
   onSubmit = (e) => {
     e.preventDefault()
     if (typeof this.props.onSubmit === 'function') {
@@ -19,9 +18,9 @@ class ProMainForm extends Component {
       this.props.onSubmit()
     }
   }
-  addProduct = () => {
+  addSupplier = () => {
     this.props.history.push(
-      '/home/productManager/productForm?isRevise=false'
+      '/home/supplierManager/supplierForm?isRevise=false'
     )
   }
   render () {
@@ -32,7 +31,7 @@ class ProMainForm extends Component {
         <Row>
           <Col>
             <Form.Item
-              label='商品名称'
+              label='供货商名称'
               labelAlign='left'
             >
               {
@@ -42,17 +41,11 @@ class ProMainForm extends Component {
           </Col>
           <Col>
             <Form.Item
-              label='商品状态'
+              label='供货商电话'
               labelAlign='left'
             >
               {
-                getFieldDecorator('status', {
-                })(<Select placeholder='全部' allowClear>
-                  {/* <Option key="" >全部</Option> */}
-                  <Option value={1} >上线</Option>
-                  <Option value={0} >下线</Option>
-                </Select>)
-
+                getFieldDecorator('name')(<Input allowClear placeholder='请输入' />)
               }
             </Form.Item>
           </Col>
@@ -67,7 +60,7 @@ class ProMainForm extends Component {
 
               </div>
               <div>
-                <Button style={{ marginLeft: '24px' }} type='primary' onClick={this.addProduct}>新增商品</Button>
+                <Button style={{ marginLeft: '24px' }} type='primary' onClick={this.addSupplier}>新增供货商</Button>
                 {/* <Button style={{ marginLeft: '24px' }} onClick={this.handleReset}>导入</Button> */}
               </div>
             </div>
@@ -78,10 +71,10 @@ class ProMainForm extends Component {
     )
   }
 }
-const SearchProMainForm = Form.createWithModel({
-  formId: 'ProductManMain/ProMainForm',
+const SearchSupplierForm = Form.createWithModel({
+  formId: 'Supplier/SupplierSearchForm',
   onValuesChange: (props, changedValues, allValues) => {
     // console.log(props, changedValues, allValues)
   }
-})(ProMainForm)
-export default SearchProMainForm
+})(SupplierSearchForm)
+export default SearchSupplierForm

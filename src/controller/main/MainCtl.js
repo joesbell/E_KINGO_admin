@@ -7,7 +7,8 @@ import autowire from '@symph/joy/autowire'
 // import dynamic from '@symph/joy/dynamic'
 import AppModel from '../../model/AppModel'
 import UserModel from '../../model/UserModel'
-import { registErrorHandler } from '../../util/api'
+import { registErrorHandler, setCommonHeader } from '../../util/api'
+
 // import querystring from 'query-string'
 // import DynamicLoading from '../../component/DynamicLoading'
 
@@ -25,7 +26,7 @@ const { Header, Content, Sider, Footer } = Layout
   menuRoot: app.menuRoot,
   menuCurrentPath: app.menuCurrentPath,
   menuOpenKeys: app.menuOpenKeys,
-  user: user.user,
+  userName: user.userName ? user.userName : window.sessionStorage.getItem('userName'),
   collapsed: app.menuCollapsed
 }))
 export default class MainCtl extends React.Component {
@@ -33,9 +34,8 @@ export default class MainCtl extends React.Component {
     super(...args)
 
     // 注册未登录异常监听器
-    registErrorHandler('oauth-301', 200, (error) => {
-      let loginUrl = error.response.headers.get('oauthredirect')
-      this.userModel.login({ loginUrl })
+    registErrorHandler('401', 200, () => {
+      this.props.history.push('/')
     })
   }
 
@@ -53,6 +53,12 @@ export default class MainCtl extends React.Component {
     try {
       // let curUrl = querystring.parseUrl(window.location.href)
       // await this.userModel.fetchCurrentUser({ sst: curUrl.query.sst })
+      if (window.sessionStorage.getItem('token')) {
+        setCommonHeader({ 'Authorization': window.sessionStorage.getItem('token') })
+      } else {
+        this.props.history.push('/')
+      }
+
       await this.appModel.initApp()
       this.setState({
         loading: false
@@ -79,8 +85,11 @@ export default class MainCtl extends React.Component {
       okText: '退出登录',
       okType: 'danger',
       cancelText: '取消',
-      onOk: () => {
-        this.userModel.logout()
+      onOk: async () => {
+        await this.userModel.logout()
+        await window.sessionStorage.removeItem('token')
+        await window.sessionStorage.removeItem('userName')
+        await this.props.history.push('/')
       }
     })
   }
@@ -125,7 +134,7 @@ export default class MainCtl extends React.Component {
   }
 
   render () {
-    let { user, collapsed, menuRoot, menuCurrentPath } = this.props
+    let { userName, collapsed, menuRoot, menuCurrentPath } = this.props
     let { loading } = this.state
     let currentMenu = menuCurrentPath && menuCurrentPath.length > 0 ? menuCurrentPath[menuCurrentPath.length - 1] : {}
     if (loading) {
@@ -170,7 +179,7 @@ export default class MainCtl extends React.Component {
                 />
               </div>
               <div className={styles.right}>
-                <span>您好，{user && user.operatorName}</span>
+                <span>您好，{userName}</span>
                 <span className={styles.arrowRight} onClick={this.onLogout}>
                   <Icon type={'right'} title={'退出登录'} />
                 </span>
@@ -188,7 +197,10 @@ export default class MainCtl extends React.Component {
                 <Route exact path='/home/orderManager/orderDetail' component={require('../order_manager/order_main/OrderDetailCtl').default} />
 
                 <Route exact path='/home/reportManager/:tab?' component={require('../report_manager/ReportManCtl').default} />
+
                 <Route exact path='/home/supplierManager' component={require('../supplier_manager/SupplierManCtl').default} />
+                <Route exact path='/home/supplierManager/supplierForm' component={require('../supplier_manager/supplier_main/SupplierFormCrl').default} />
+
                 <Route exact path='/home/staffManager' component={require('../staff_manager/StaffManCtl').default} />
                 {/* <Route exact path='/home/systemManager' component={require('../system_manager/ReviewCtl').default} /> */}
 

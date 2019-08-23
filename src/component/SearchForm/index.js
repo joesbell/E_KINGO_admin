@@ -10,13 +10,13 @@ class SearchForm extends Component {
       md: { span: 24 },
       lg: { span: 24 },
       xl: { span: 6 },
-      xxl: { span: 4 }
+      xxl: { span: 5 }
     },
     wrapperCol: {
       md: { span: 24 },
       lg: { span: 24 },
       xl: { span: 18 },
-      xxl: { span: 20 }
+      xxl: { span: 19 }
     }
   }
 

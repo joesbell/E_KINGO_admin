@@ -21,7 +21,7 @@ class SubmitForm extends Component {
   }
 
   render () {
-    return <Form hideRequiredMark {...this.props} className={classnames([styles.SubmitForm, this.props.className])} />
+    return <Form {...this.props} className={classnames([styles.SubmitForm, this.props.className])} />
   }
 }
 

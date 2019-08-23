@@ -4,19 +4,19 @@ import autowire from '@symph/joy/autowire'
 // import { fmtDate } from '../../../util/dateUtils'
 import { Table, Pagination, message, Divider, Modal } from 'antd'
 // import TaskPoolsModel from '../../../model/TaskPoolsModel'
-import ProModel from '../../../model/ProModel'
-import { constUtils, proStatus } from '../../../util/constUtils'
-import SearchProMainForm from './SearchProMainForm'
+import SupplierModel from '../../../model/SupplierModel'
+// import { constUtils, proStatus } from '../../../util/constUtils'
+import SearchSupplierForm from './SupplierSearchForm'
 const { confirm } = Modal
 
-@controller(({ pro }) => {
+@controller(({ sup }) => {
   return {
-    curPage: pro.curPage,
-    pageSize: pro.pageSize,
-    records: pro.records
+    curPage: sup.curPage,
+    pageSize: sup.pageSize,
+    records: sup.records
   }
 })
-export default class ProductManMainCtl extends Component {
+export default class supplierMainCtl extends Component {
   constructor () {
     super(...arguments)
     this.state = {
@@ -24,55 +24,34 @@ export default class ProductManMainCtl extends Component {
     }
     this.columns = [
       {
-        title: '商品编号',
-        dataIndex: 'number',
-        key: 'number'
+        title: '序号',
+        dataIndex: 'id',
+        key: 'id'
       },
       {
-        title: '商品分类',
-        dataIndex: 'category',
-        key: 'category'
-      },
-      {
-        title: '商品名称',
+        title: '供货商姓名',
         dataIndex: 'name',
         key: 'name'
       },
       {
-        title: '零售价',
-        dataIndex: 'petailPrice',
-        key: 'petailPrice'
-      },
-      {
-        title: '限购数量',
-        dataIndex: 'limitNum',
-        key: 'limitNum'
-      },
-      {
-        title: '上限有效期',
-        dataIndex: 'onlineDate',
-        key: 'onlineDate'
-      },
-      {
-        title: '供货商姓名',
-        dataIndex: 'supplerName',
-        key: 'supplerName'
-      },
-      {
         title: '供货商电话',
-        dataIndex: 'supplerPhone',
-        key: 'supplerPhone'
+        dataIndex: 'phone',
+        key: 'phone'
       },
       {
-        title: '商品状态',
-        dataIndex: 'status',
-        key: 'status',
-        render: (text) => {
-          return (
-            <span>{constUtils.getItemName(proStatus, text)}</span>
-          )
-        }
-
+        title: '公司名称',
+        dataIndex: 'address1',
+        key: 'address1'
+      },
+      {
+        title: '地址',
+        dataIndex: 'address',
+        key: 'address'
+      },
+      {
+        title: '备注',
+        dataIndex: 'remark',
+        key: 'remark'
       },
       {
         title: '操作',
@@ -85,7 +64,7 @@ export default class ProductManMainCtl extends Component {
               </span>
               <Divider type={'vertical'} />
               <span>
-                <a href='javascript:;' onClick={() => this.offline(record)} >下线</a>
+                <a href='javascript:;' onClick={() => this.offline(record)} >删除</a>
               </span>
             </div>
 
@@ -97,9 +76,9 @@ export default class ProductManMainCtl extends Component {
   // @autowire()
   // taskPoolsModel: TaskPoolsModel
   @autowire()
-  proModel: ProModel
+  supplierModel: SupplierModel
   fetchData = (curPage, pageSize) => {
-    this.searchPMForm.props.form.validateFields(async (err, fieldsValue) => {
+    this.searchSpForm.props.form.validateFields(async (err, fieldsValue) => {
       if (err) {
         return
       }
@@ -112,7 +91,7 @@ export default class ProductManMainCtl extends Component {
           isLoading: true
         })
 
-        await this.proModel.fetchProData({ curPage, pageSize, ...values })
+        await this.supplierModel.fetchSupplierData({ curPage, pageSize, ...values })
       } catch (e) {
         message.error(e.message || '出错了，请重试')
       }
@@ -161,8 +140,8 @@ export default class ProductManMainCtl extends Component {
     const { curPage, pageSize, totalCount, records } = this.props
     return (
       <div>
-        <SearchProMainForm onSubmit={this.onSubmitSearch} formRef={(form) => { this.searchPMForm = form }} />
-        <Table scroll={{ x: 'max-content' }} dataSource={records} columns={this.columns} bordered pagination={false} rowKey={(record) => { return `${record.name}index` }} loading={this.state.isLoading} />
+        <SearchSupplierForm onSubmit={this.onSubmitSearch} formRef={(form) => { this.searchSpForm = form }} />
+        <Table scroll={{ x: 'max-content' }} dataSource={records} columns={this.columns} bordered pagination={false} rowKey='id' loading={this.state.isLoading} />
         <Pagination size='small' onChange={this.onChangePage} total={totalCount} pageSize={pageSize} current={curPage}
           showSizeChanger showQuickJumper onShowSizeChange={this.onShowSizeChange} />
       </div>

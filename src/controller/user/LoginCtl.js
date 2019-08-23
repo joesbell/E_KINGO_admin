@@ -61,7 +61,9 @@ class LoginPage extends Component {
         'password': values.password
       }
       await this.userModel.login(userObj)
-      // await this.props.history.push('/home')
+      await window.sessionStorage.setItem('userName', this.props.userName)
+      await window.sessionStorage.setItem('token', this.props.token)
+      await this.props.history.push('/home')
     } catch (e) {
       message.error(e.message || '出错了，请重试')
     }

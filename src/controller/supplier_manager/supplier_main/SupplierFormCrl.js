@@ -6,14 +6,14 @@ import autowire from '@symph/joy/autowire'
 import PageHeader from '../../../component/PageHeader'
 import SupplierModel from '../../../model/SupplierModel'
 import { PageBodyCard } from '../../../component/Card'
-import SubmitProductManForm from './ProductManForm'
+import SubmitSupplierForm from './SupplierForm'
 
 @controller(({ sup }, { match }) => {
   return {
     supRecords: sup.records
   }
 })
-export default class ProductManForm extends Component {
+export default class SupplierFormCrl extends Component {
   @autowire()
   supplierModel: SupplierModel
 
@@ -28,17 +28,12 @@ export default class ProductManForm extends Component {
     this.props.history.goBack()
   }
   onSubmitSearch = async () => {
-    this.SubmitPMForm.props.form.validateFields(async (err, fieldsValue) => {
+    this.SubmitSpForm.props.form.validateFields(async (err, fieldsValue) => {
       if (err) {
         return
       }
-      let paths = []
-      fieldsValue['paths'].fileList.map((i) => {
-        paths.push(i.response.data[0])
-      })
       let values = {
-        ...fieldsValue,
-        paths: paths
+        ...fieldsValue
       }
       console.log(values)
 
@@ -62,11 +57,11 @@ export default class ProductManForm extends Component {
         <PageHeader
           onBack={this.goBack}
           className='tabs'
-          title={<span className='title'>新增商品</span>}
+          title={<span className='title'>新增供货商</span>}
         />
         <PageBodyCard>
           {/* <div className={styles.SubmitProductManFormBox}> */}
-          <SubmitProductManForm onSubmit={this.onSubmitSearch} onCancle={this.onCancle} formRef={(form) => { this.SubmitPMForm = form }} />
+          <SubmitSupplierForm onSubmit={this.onSubmitSearch} onCancle={this.onCancle} formRef={(form) => { this.SubmitSpForm = form }} />
 
           {/* </div> */}
         </PageBodyCard>

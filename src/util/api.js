@@ -9,7 +9,7 @@ const { publicRuntimeConfig: { apiPath } } = getConfig()
 const RESULT_CODE = 'code'
 const RESULT_MSG = 'msg'
 // const RESULT_DATA = 'resultData'
-const SUCCESS_CODE = '000000'
+const SUCCESS_CODE = 200
 
 //= ===== 通用参数处理
 /**
@@ -162,10 +162,10 @@ export function callApi (url, params, { method = 'POST', responseBodyType = 'jso
     // 单点登录的特殊处理，只有POST请求，才加head部分。
     if (!(params instanceof window.FormData)) {
       // 加入通用参数
-      params = {
-        head: commonParams || {},
-        data: params || {}
-      }
+      // params = {
+      //   head: commonParams || {},
+      //   data: params || {}
+      // }
     }
   }
 
