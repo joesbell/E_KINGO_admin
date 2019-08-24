@@ -1,12 +1,13 @@
 import React, { Component } from 'react'
 import controller from '@symph/joy/controller'
-// import autowire from '@symph/joy/autowire'
+import autowire from '@symph/joy/autowire'
 import SubmitForm, { Row, Col, ActionsItem } from '../../../component/SubmitForm'
 import Form from '../../../component/Form'
+import ProModel from '../../../model/ProModel'
 import InputSelect from '../../../component/InputSelect'
 import { parse } from 'querystring'
 
-import { Button, Input, DatePicker, Select, Upload, Icon, Modal } from 'antd'
+import { Button, Input, DatePicker, Select, Upload, Icon, Modal, InputNumber } from 'antd'
 const { Option } = Select
 const labelCol = {
   md: { span: 24 },
@@ -30,10 +31,12 @@ function getBase64 (file) {
   })
 }
 
-@controller(({ sup }, { match }) => {
+@controller(({ sup, pro }, { match }) => {
   let query = parse(window.location.search.slice(1))
   return {
     AllSupplier: sup.AllSupplier,
+    categoryValue: pro.categoryValue,
+    fileList: pro.fileList,
     isRevise: query.isRevise ? query.isRevise : null,
     detail: query.detail ? query.detail : null,
     id: query.id ? query.id : null
@@ -42,11 +45,15 @@ function getBase64 (file) {
 class ProductManForm extends Component {
   state = {
     previewVisible: false,
-    previewImage: '',
-    fileList: [
-    ]
+    previewImage: ''
+    // fileList: [
+    // ]
   };
+  @autowire()
+  proModel: ProModel
+  componentDidMount=() => {
 
+  }
   handleCancel = () => this.setState({ previewVisible: false });
 
   handlePreview = async file => {
@@ -59,8 +66,7 @@ class ProductManForm extends Component {
       previewVisible: true
     })
   };
-
-  handleChange = ({ fileList }) => this.setState({ fileList });
+  handleChange = ({ fileList }) => this.proModel.setFileList(fileList);
   onSubmit = (e) => {
     e.preventDefault()
     if (typeof this.props.onSubmit === 'function') {
@@ -72,12 +78,13 @@ class ProductManForm extends Component {
   }
   handleReset = async () => {
     await this.props.form.resetFields()
+    await this.proModel.setFileList([])
     await this.props.onCancle()
   }
   render () {
     const { form } = this.props
     const { getFieldDecorator } = form
-    const { previewVisible, previewImage, fileList } = this.state
+    const { previewVisible, previewImage } = this.state
     const uploadButton = (
       <div>
         <Icon type='plus' />
@@ -124,34 +131,59 @@ class ProductManForm extends Component {
                       message: '不能为空'
                     }
                   ]
-                })(<Input allowClear />)
+                })(<Input readOnly={this.props.detail === 'true'} allowClear={!this.props.detail} />)
               }
             </Form.Item>
           </Col>
           <Col>
-            <Form.Item
-              label='图片'
-            >
-              {
-                getFieldDecorator('paths', {
-                  rules: [
-                    {
-                      required: true,
-                      message: '不能为空'
-                    }
-                  ]
-                })(<Upload
-                  action='http://118.24.50.239:8181/file/upload'
-                  listType='picture-card'
-                  name='files'
-                  fileList={fileList}
-                  onPreview={this.handlePreview}
-                  onChange={this.handleChange}
+            {
+              this.props.detail === 'true'
+                ? <Form.Item
+                  label='图片'
                 >
-                  {fileList.length >= 3 ? null : uploadButton}
-                </Upload>)
-              }
-            </Form.Item>
+                  {
+                    getFieldDecorator('paths', {
+                      rules: [
+                        {
+                          required: true,
+                          message: '不能为空'
+                        }
+                      ]
+                    })(<Upload
+                      action='http://118.24.50.239:8181/file/upload'
+                      listType='picture-card'
+                      name='files'
+                      fileList={this.props.fileList}
+                      onPreview={this.handlePreview}
+                      onChange={this.handleChange}
+                    />)
+                  }
+                </Form.Item>
+                : <Form.Item
+                  label='图片'
+                >
+                  {
+                    getFieldDecorator('paths', {
+                      rules: [
+                        {
+                          required: true,
+                          message: '不能为空'
+                        }
+                      ]
+                    })(<Upload
+                      action='http://118.24.50.239:8181/file/upload'
+                      listType='picture-card'
+                      name='files'
+                      fileList={this.props.fileList}
+                      onPreview={this.handlePreview}
+                      onChange={this.handleChange}
+                    >
+                      {this.props.fileList.length >= 3 ? null : uploadButton}
+                    </Upload>)
+                  }
+                </Form.Item>
+            }
+
           </Col>
           <Col>
             <Form.Item
@@ -165,7 +197,7 @@ class ProductManForm extends Component {
                       message: '不能为空'
                     }
                   ]
-                })(<Input allowClear />)
+                })(<InputNumber style={{ width: '100%' }} min={0} readOnly={this.props.detail === 'true'} step={0.1} />)
               }
             </Form.Item>
           </Col>
@@ -181,7 +213,7 @@ class ProductManForm extends Component {
                       message: '不能为空'
                     }
                   ]
-                })(<Input allowClear />)
+                })(<InputNumber style={{ width: '100%' }} min={0} readOnly={this.props.detail === 'true'} step={0.1} />)
               }
             </Form.Item>
           </Col>
@@ -197,7 +229,7 @@ class ProductManForm extends Component {
                       message: '不能为空'
                     }
                   ]
-                })(<Input allowClear />)
+                })(<InputNumber style={{ width: '100%' }} min={0} readOnly={this.props.detail === 'true'} />)
               }
             </Form.Item>
           </Col>
@@ -207,7 +239,7 @@ class ProductManForm extends Component {
               style={{ marginBottom: 0 }}
             >
               <Form.Item
-                style={{ display: 'inline-block', width: 'calc(50% - 50px)' }}
+                style={{ display: 'inline-block', width: 'calc(50% - 12px)' }}
               >
                 {
                   getFieldDecorator('onlineStartDate', {
@@ -220,13 +252,14 @@ class ProductManForm extends Component {
                   })(
                     <DatePicker format={'YYYY.MM.DD'}
                       placeholder='起始时间'
+                      disabled={this.props.detail === 'true'}
                       disabledDate={d =>
                         form.getFieldValue('onlineEndDate') && d.isAfter(form.getFieldValue('onlineEndDate'), 'day')}
                     />)
                 }
               </Form.Item>
-              {/* <span style={{ display: 'inline-block', width: '20px', textAlign: 'center' }}>-</span> */}
-              <Form.Item style={{ display: 'inline-block', width: 'calc(50% - 30px)' }}>
+              <span style={{ display: 'inline-block', width: '24px', textAlign: 'center' }} />
+              <Form.Item style={{ display: 'inline-block', width: 'calc(50% - 12px)' }}>
                 {
                   getFieldDecorator('onlineEndDate', {
                     rules: [
@@ -238,7 +271,7 @@ class ProductManForm extends Component {
                   })(
                     <DatePicker format={'YYYY.MM.DD'}
                       placeholder='结束时间'
-
+                      disabled={this.props.detail === 'true'}
                       disabledDate={d =>
                         form.getFieldValue('onlineStartDate') && d.isBefore(form.getFieldValue('onlineStartDate', 'day'))} />)
                 }
@@ -257,9 +290,9 @@ class ProductManForm extends Component {
                       message: '不能为空'
                     }
                   ]
-                })(<Select placeholder='请选择' onChange={this.handleAuditChange} allowClear>
+                })(<Select placeholder='请选择' disabled={this.props.detail === 'true'} onChange={this.handleAuditChange} allowClear>
                   {(this.props.AllSupplier || []).map(el => (
-                    <Option key={el.id} >{el.name}--{el.phone}</Option>
+                    <Option key={el.id} value={el.id} >{el.name}--{el.phone}</Option>
                   ))}
                 </Select>)
 

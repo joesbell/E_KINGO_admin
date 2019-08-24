@@ -8,7 +8,9 @@ export default class ProModel {
   initState = {
     current: 1,
     size: 10,
-    proDetail: null
+    proDetail: null,
+    categoryValue: null, // 商品分类
+    fileList: []
   }
 
   async fetchProData (val) {
@@ -17,8 +19,13 @@ export default class ProModel {
       ...data
     })
   }
+  // 新增商品
   async addPro (val) {
     await callApi('/goods/insert', { ...val }, { method: 'POST' })
+  }
+  // 修改商品
+  async updatePro (val) {
+    await callApi('/goods/update', { ...val }, { method: 'POST' })
   }
   // 商品分类
   async proCategory (name) {
@@ -34,6 +41,18 @@ export default class ProModel {
     let { data: { data } } = await callApi('/goods/get', { id: id }, { method: 'GET' })
     this.setState({
       proDetail: data
+    })
+  }
+  // 更改商品分类
+  async changeCategoryValue (val) {
+    this.setState({
+      categoryValue: val
+    })
+  }
+  // 更改图片
+  async setFileList (fileList) {
+    this.setState({
+      fileList: fileList
     })
   }
 }

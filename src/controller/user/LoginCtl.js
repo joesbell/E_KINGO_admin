@@ -63,13 +63,13 @@ class LoginPage extends Component {
       await this.userModel.login(userObj)
       await window.sessionStorage.setItem('userName', this.props.userName)
       await window.sessionStorage.setItem('token', this.props.token)
+      await this.setState({
+        submitting: false
+      })
       await this.props.history.push('/home')
     } catch (e) {
       message.error(e.message || '出错了，请重试')
     }
-    this.setState({
-      submitting: false
-    })
   }
 
   // changeAutoLogin = e => {

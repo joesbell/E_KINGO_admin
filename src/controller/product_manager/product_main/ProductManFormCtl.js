@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
-import { message } from 'antd'
+import { message, Spin } from 'antd'
 import { fmtDate } from '../../../util/dateUtils'
-
+import moment from 'moment'
 // import { Switch, Route } from '@symph/joy/router'
 import controller from '@symph/joy/controller'
 import autowire from '@symph/joy/autowire'
@@ -11,11 +11,10 @@ import ProModel from '../../../model/ProModel'
 import { PageBodyCard } from '../../../component/Card'
 import SubmitProductManForm from './ProductManForm'
 import { parse } from 'querystring'
-
+// import { object } from 'prop-types'
+let uid = 1
 @controller(({ sup, pro }, { match }) => {
   let query = parse(window.location.search.slice(1))
-  console.log(query)
-
   return {
     supRecords: sup.records,
     proDetail: pro.proDetail,
@@ -25,34 +24,55 @@ import { parse } from 'querystring'
   }
 })
 export default class ProductManForm extends Component {
+  state={
+    isLoading: false
+  }
   @autowire()
   supplierModel: SupplierModel
   @autowire()
   proModel: ProModel
   async componentDidMount () {
     if (this.props.id) {
-      await this.proModel.getProDetail(this.props.id)
-      // await ["number", "category", "name", "costPrice", "petailPrice", "limitNum", "onlineStartDate", "onlineEndDate", "supplerId"].forEach(data => {
-      //   this.SubmitPMForm.props.form.setFieldsValue({ [data]: this.props.proDetail[data] })
-      // });
-      // await console.log(this.props.proDetail);
-
-      await this.SubmitPMForm.props.form.setFieldsValue({ 'number': this.props.proDetail.number })
-      this.SubmitPMForm.props.form.setFieldsValue({ 'category': this.props.proDetail.category })
-      this.SubmitPMForm.props.form.setFieldsValue({ 'name': this.props.proDetail.name })
-      this.SubmitPMForm.props.form.setFieldsValue({ 'costPrice': this.props.proDetail.costPrice })
-      this.SubmitPMForm.props.form.setFieldsValue({ 'petailPrice': this.props.proDetail.petailPrice })
-      this.SubmitPMForm.props.form.setFieldsValue({ 'limitNum': this.props.proDetail.limitNum })
-      // this.SubmitPMForm.props.form.setFieldsValue({"onlineStartDate":this.props.proDetail.onlineStartDate})
-      // this.SubmitPMForm.props.form.setFieldsValue({"onlineEndDate":this.props.proDetail.onlineEndDate})
-      this.SubmitPMForm.props.form.setFieldsValue({ 'supplerId': this.props.proDetail.supplerId })
+      try {
+        this.setState({
+          isLoading: true
+        })
+        let fileList = []
+        await this.proModel.getProDetail(this.props.id)
+        await ['number', 'category', 'name', 'costPrice', 'paths', 'petailPrice', 'onlineStartDate', 'onlineEndDate', 'limitNum', 'supplerId'].forEach(data => {
+          if (data === 'onlineStartDate' || data === 'onlineEndDate') {
+            this.SubmitPMForm.props.form.setFieldsValue({ [data]: moment(this.props.proDetail[data], 'YYYY-MM-DD') })
+          } else {
+            this.SubmitPMForm.props.form.setFieldsValue({ [data]: this.props.proDetail[data] })
+          }
+        })
+        for (const iterator of this.props.proDetail.paths) {
+          fileList.push({
+            url: iterator,
+            uid: uid++,
+            name: `image${uid++}.png`,
+            status: 'done'
+          })
+        }
+        await this.proModel.setFileList(fileList)
+      } catch (e) {
+        message.error(e.message || '出错了，请重试')
+      }
+      this.setState({
+        isLoading: false
+      })
     }
-    await this.supplierModel.fetchAllSupplier()
-    await this.proModel.proCategory()
+    try {
+      await this.supplierModel.fetchAllSupplier()
+      await this.proModel.proCategory()
+    } catch (e) {
+      message.error(e.message || '出错了，请重试')
+    }
   }
 
   goBack = async () => {
     await this.SubmitPMForm.props.form.resetFields()
+    await this.proModel.setFileList([])
     await this.props.history.goBack()
   }
   onCancle = () => {
@@ -64,9 +84,18 @@ export default class ProductManForm extends Component {
         return
       }
       let paths = []
-      fieldsValue['paths'].fileList.map((i) => {
-        paths.push(i.response.data[0])
-      })
+      if (fieldsValue['paths'].fileList) {
+        fieldsValue['paths'].fileList.map((i) => {
+          if (i.response) {
+            paths.push(i.response.data[0])
+          } else {
+            paths.push(i.url)
+          }
+        })
+      } else {
+        paths = fieldsValue['paths']
+      }
+
       let values = {
         ...fieldsValue,
         paths: paths,
@@ -79,14 +108,20 @@ export default class ProductManForm extends Component {
         this.setState({
           isLoading: true
         })
-
-        await this.proModel.addPro({ ...values })
+        if (this.props.isRevise === 'true') {
+          values = Object.assign(values, { id: this.props.id })
+          await this.proModel.updatePro({ ...values })
+          Promise.all([this.setState({ isLoading: false }), message.success('修改成功'), this.proModel.setFileList([]), this.SubmitPMForm.props.form.resetFields(), this.props.history.goBack()])
+        } else {
+          await this.proModel.addPro({ ...values })
+          Promise.all([this.setState({ isLoading: false }), message.success('新增成功'), this.proModel.setFileList([]), this.SubmitPMForm.props.form.resetFields(), this.props.history.goBack()])
+        }
       } catch (e) {
         message.error(e.message || '出错了，请重试')
+        this.setState({
+          isLoading: false
+        })
       }
-      this.setState({
-        isLoading: false
-      })
     })
   }
   render () {
@@ -107,9 +142,10 @@ export default class ProductManForm extends Component {
         }
 
         <PageBodyCard>
-          {/* <div className={styles.SubmitProductManFormBox}> */}
-          <SubmitProductManForm onSubmit={this.onSubmitSearch} onCancle={this.onCancle} formRef={(form) => { this.SubmitPMForm = form }} />
-
+          <Spin spinning={this.state.isLoading}>
+            {/* <div className={styles.SubmitProductManFormBox}> */}
+            <SubmitProductManForm onSubmit={this.onSubmitSearch} onCancle={this.onCancle} formRef={(form) => { this.SubmitPMForm = form }} />
+          </Spin>
           {/* </div> */}
         </PageBodyCard>
       </div>

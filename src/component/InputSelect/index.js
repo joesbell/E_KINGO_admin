@@ -50,6 +50,11 @@ export default class InputSelect extends Component {
     value: undefined
   };
 
+  componentDidMount=() => {
+    // if (this.props.value) {
+    // this.setState({ value: 'dsfds' })
+    // }
+  }
   handleSearch = value => {
     if (value) {
       this.setState({ value })
