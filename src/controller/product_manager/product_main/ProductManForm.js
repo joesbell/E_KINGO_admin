@@ -4,6 +4,7 @@ import controller from '@symph/joy/controller'
 import SubmitForm, { Row, Col, ActionsItem } from '../../../component/SubmitForm'
 import Form from '../../../component/Form'
 import InputSelect from '../../../component/InputSelect'
+import { parse } from 'querystring'
 
 import { Button, Input, DatePicker, Select, Upload, Icon, Modal } from 'antd'
 const { Option } = Select
@@ -30,8 +31,12 @@ function getBase64 (file) {
 }
 
 @controller(({ sup }, { match }) => {
+  let query = parse(window.location.search.slice(1))
   return {
-    AllSupplier: sup.AllSupplier
+    AllSupplier: sup.AllSupplier,
+    isRevise: query.isRevise ? query.isRevise : null,
+    detail: query.detail ? query.detail : null,
+    id: query.id ? query.id : null
   }
 })
 class ProductManForm extends Component {
@@ -62,7 +67,7 @@ class ProductManForm extends Component {
       this.props.onSubmit()
     }
   }
-  setValue=(value) => {
+  setValue = (value) => {
     this.props.form.setFieldsValue({ 'category': value })
   }
   handleReset = async () => {
@@ -261,10 +266,15 @@ class ProductManForm extends Component {
               }
             </Form.Item>
           </Col>
-          <ActionsItem labelCol={labelCol} wrapperCol={wrapperCol}>
-            <Button type='primary' onClick={this.onSubmit}>保存</Button>
-            <Button style={{ marginLeft: '24px' }} onClick={this.handleReset}>取消</Button>
-          </ActionsItem>
+          {
+            this.props.detail === 'true'
+              ? null
+              : <ActionsItem labelCol={labelCol} wrapperCol={wrapperCol}>
+                <Button type='primary' onClick={this.onSubmit}>保存</Button>
+                <Button style={{ marginLeft: '24px' }} onClick={this.handleReset}>取消</Button>
+              </ActionsItem>
+          }
+
           <Modal visible={previewVisible} footer={null} onCancel={this.handleCancel}>
             <img alt='example' style={{ width: '100%' }} src={previewImage} />
           </Modal>

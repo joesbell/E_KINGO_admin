@@ -152,8 +152,8 @@ export default class MainCtl extends React.Component {
             className={styles.sider}
           >
             <div className={styles.logo}>
-              <img className={styles.icon} alt={'logo'}
-                src={require('./logo.png')} />
+              {/* <img className={styles.icon} alt={'logo'}
+                src={require('./logo.png')} /> */}
               {collapsed
                 ? null
                 : <span className={styles.title}>后台管理系统</span>

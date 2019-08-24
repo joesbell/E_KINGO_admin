@@ -7,7 +7,8 @@ export default class ProModel {
 
   initState = {
     current: 1,
-    size: 10
+    size: 10,
+    proDetail: null
   }
 
   async fetchProData (val) {
@@ -22,5 +23,17 @@ export default class ProModel {
   // 商品分类
   async proCategory (name) {
     await callApi('/mallCommon/queryCategory', { ...name }, { method: 'POST' })
+  }
+
+  // 商品上下线
+  async offlinePro (pro) {
+    await callApi('/goods/updateOnLineStatus', { ...pro }, { method: 'POST' })
+  }
+  // 商品详情
+  async getProDetail (id) {
+    let { data: { data } } = await callApi('/goods/get', { id: id }, { method: 'GET' })
+    this.setState({
+      proDetail: data
+    })
   }
 }

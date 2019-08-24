@@ -45,43 +45,43 @@ function fetchPass (value, callback) {
   timeout = setTimeout(fake, 300)
 }
 export default class InputSelect extends Component {
-    state = {
-      data: [],
-      value: undefined
-    };
+  state = {
+    data: [],
+    value: undefined
+  };
 
-    handleSearch = value => {
-      if (value) {
-        this.setState({ value })
-        this.props.setValue(value)
-        fetchPass(value, data => this.setState({ data }))
-      } else {
-        this.setState({ data: [] })
-      }
-    };
-
-    handleChange = value => {
+  handleSearch = value => {
+    if (value) {
       this.setState({ value })
       this.props.setValue(value)
-    };
-    render () {
-      const options = this.state.data.map(d => <Option key={d.value}>{d.text}</Option>)
-      return (
-        <Select
-          showSearch
-          value={this.state.value}
-          placeholder={this.props.placeholder}
-          style={this.props.style}
-          defaultActiveFirstOption={false}
-          showArrow={false}
-          filterOption={false}
-          onSearch={this.handleSearch}
-          onChange={this.handleChange}
-          notFoundContent={null}
-          allowClear
-        >
-          {options}
-        </Select>
-      )
+      fetchPass(value, data => this.setState({ data }))
+    } else {
+      this.setState({ data: [] })
     }
+  };
+
+  handleChange = value => {
+    this.setState({ value })
+    this.props.setValue(value)
+  };
+  render () {
+    const options = this.state.data.map(d => <Option key={d.value}>{d.text}</Option>)
+    return (
+      <Select
+        showSearch
+        value={this.state.value}
+        placeholder={this.props.placeholder}
+        style={this.props.style}
+        defaultActiveFirstOption={false}
+        showArrow={false}
+        filterOption={false}
+        onSearch={this.handleSearch}
+        onChange={this.handleChange}
+        notFoundContent={null}
+        allowClear
+      >
+        {options}
+      </Select>
+    )
+  }
 }

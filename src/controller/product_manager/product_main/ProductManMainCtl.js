@@ -21,7 +21,8 @@ export default class ProductManMainCtl extends Component {
   constructor () {
     super(...arguments)
     this.state = {
-      isLoading: false
+      isLoading: false,
+      btnLoading: false
     }
     this.columns = [
       {
@@ -38,9 +39,9 @@ export default class ProductManMainCtl extends Component {
         title: '商品名称',
         dataIndex: 'name',
         key: 'name',
-        render: (text) => {
+        render: (text, record, index) => {
           return (
-            <span style={{ color: '#1890ff', cursor: 'pointer' }}>{text}</span>
+            <span style={{ color: '#1890ff', cursor: 'pointer' }} onClick={() => this.goProDetail(record)}>{text}</span>
           )
         }
       },
@@ -93,7 +94,7 @@ export default class ProductManMainCtl extends Component {
           return (
             <div>
               <span>
-                <a href='javascript:;' onClick={() => this.goDetail(record)}>修改</a>
+                <a href='javascript:;' onClick={() => this.changeForm(record)}>修改</a>
               </span>
               <Divider type={'vertical'} />
               <span>
@@ -110,6 +111,17 @@ export default class ProductManMainCtl extends Component {
   // taskPoolsModel: TaskPoolsModel
   @autowire()
   proModel: ProModel
+
+  changeForm = (record) => {
+    this.props.history.push(
+      `/home/productManager/productForm?id=${record.id}&isRevise=true`
+    )
+  }
+  goProDetail = (record) => {
+    this.props.history.push(
+      `/home/productManager/productForm?id=${record.id}&detail=true`
+    )
+  }
   fetchData = (current, size) => {
     this.searchPMForm.props.form.validateFields(async (err, fieldsValue) => {
       if (err) {
@@ -139,14 +151,25 @@ export default class ProductManMainCtl extends Component {
     )
   }
   offline = async (record) => {
+    const { current, size } = this.props
+    const _this = this
     confirm({
       title: record.status === 0 ? '上线' : '下线',
       content: `确定${record.status === 0 ? '上线' : '下线'}${record.name}?`,
       okText: '确定',
       okType: record.status === 0 ? 'primary' : 'danger',
       cancelText: '取消',
-      onOk () {
-        console.log('OK')
+      async onOk () {
+        try {
+          let pro = {
+            'id': record.id,
+            'status': record.status
+          }
+          await _this.proModel.offlinePro(pro)
+          Promise.all([message.success(record.status === 0 ? '上线' : '下线', 1), Modal.destroyAll(), _this.fetchData(current, size)])
+        } catch (e) {
+          message.error(e.message || '出错了，请重试')
+        }
       },
       onCancel () {
         console.log('Cancel')
