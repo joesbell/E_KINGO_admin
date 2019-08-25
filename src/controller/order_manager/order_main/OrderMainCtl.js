@@ -1,9 +1,10 @@
 import React, { Component } from 'react'
 import controller from '@symph/joy/controller'
-// import autowire from '@symph/joy/autowire'
-// import { fmtDate } from '../../../util/dateUtils'
+import autowire from '@symph/joy/autowire'
+import { fmtDate } from '../../../util/dateUtils'
 import { Table, Pagination, message, Divider, Modal } from 'antd'
-// import TaskPoolsModel from '../../../model/TaskPoolsModel'
+import { constUtils, orderStatus } from '../../../util/constUtils'
+import OrderModel from '../../../model/OrderModel'
 // import TodoTaskModel from '../../../model/TodoTaskModel'
 import SearchOrderMainForm from './OrderMainForm'
 const { confirm } = Modal
@@ -17,9 +18,12 @@ for (let i = 0; i < 46; i++) {
     address: `London, Park Lane no. ${i}`
   })
 }
-@controller(({ state }) => {
+@controller(({ ord }) => {
   return {
-    op: state.op
+    current: ord.current,
+    size: ord.size,
+    total: ord.total,
+    records: ord.records
   }
 })
 export default class OrderMainCtl extends Component {
@@ -32,21 +36,55 @@ export default class OrderMainCtl extends Component {
     }
     this.columns = [
       {
-        title: 'Name',
-        dataIndex: 'name'
+        title: '订单编号',
+        dataIndex: 'orderNumber'
       },
       {
-        title: 'Age',
-        dataIndex: 'age',
+        title: '下单时间',
+        dataIndex: 'endDate',
         render: (text, record, index) => {
           return (
-            <div onClick={() => this.goProDetail(record)} style={{ color: 'red', cursor: 'pointer' }}>{record.age}</div>
+            <span >{fmtDate(record.orderDate, 'YYYY-MM-DD')}</span>
           )
         }
       },
       {
-        title: 'Address',
-        dataIndex: 'address'
+        title: '分公司/部门',
+        dataIndex: 'companyDepartName'
+      },
+      {
+        title: '下单员工',
+        dataIndex: 'staffName'
+      },
+      {
+        title: '下单员工电话',
+        dataIndex: 'phone'
+      },
+      {
+        title: '销售经理',
+        dataIndex: 'salesManagerName'
+      },
+      {
+        title: '订单总金额',
+        dataIndex: 'orderAmount'
+      },
+      {
+        title: '商品数量',
+        dataIndex: 'goodsNum',
+        render: (text, record, index) => {
+          return (
+            <span style={{ color: '#1890ff', cursor: 'pointer' }} onClick={() => this.goProDetail(record)}>{text}件</span>
+          )
+        }
+      },
+      {
+        title: '订单状态',
+        dataIndex: 'orderStatus',
+        render: (text, record, index) => {
+          return (
+            <span>{constUtils.getItemName(orderStatus, text)}</span>
+          )
+        }
       },
       {
         title: '操作',
@@ -55,11 +93,15 @@ export default class OrderMainCtl extends Component {
           return (
             <div>
               <span>
-                <a href='javascript:;' onClick={() => this.Detail(record)}>确认收货</a>
+                <a href='javascript:;' onClick={() => this.goOrderDetail(record)}>查看</a>
               </span>
               <Divider type={'vertical'} />
               <span>
-                <a href='javascript:;' onClick={() => this.offline(record)} >删除</a>
+                <a href='javascript:;' onClick={() => this.sure(record)}>确认收货</a>
+              </span>
+              <Divider type={'vertical'} />
+              <span>
+                <a href='javascript:;' onClick={() => this.delOrder(record)} >删除</a>
               </span>
             </div>
 
@@ -68,11 +110,27 @@ export default class OrderMainCtl extends Component {
       }
     ]
   }
-  // @autowire()
-  // taskPoolsModel: TaskPoolsModel
+  @autowire()
+  orderModel: OrderModel
   // @autowire()
   // todoTaskModel: TodoTaskModel
 
+  sure=async (record) => {
+    try {
+      await this.orderModel.sure({ id: record.id })
+      Promise.all([this.props.onSubmit(), message.success('收货成功')])
+    } catch (e) {
+      message.error(e.message || '出错了，请重试')
+    }
+  }
+  delOrder=async (record) => {
+    try {
+      await this.orderModel.delOrder({ id: record.id })
+      Promise.all([this.props.onSubmit(), message.success('删除成功')])
+    } catch (e) {
+      message.error(e.message || '出错了，请重试')
+    }
+  }
   start = () => {
     this.setState({ loading: true })
     // ajax request after empty completing
@@ -83,19 +141,10 @@ export default class OrderMainCtl extends Component {
       })
     }, 1000)
   };
-  goProDetail = (record) => {
-    // console.log(record)
-    this.props.history.push(
-      `/home/orderManager/orderProDetail`
-    )
-
-    // this.dispatch(routerRedux.push(`/home/orderManager/orderProDetail?${record.age}`))
-  };
   onSelectChange = selectedRowKeys => {
-    console.log('selectedRowKeys changed: ', selectedRowKeys)
     this.setState({ selectedRowKeys })
   };
-  fetchData = (pageNum, pageSize) => {
+  fetchData = (current, size) => {
     this.searchOMForm.props.form.validateFields(async (err, fieldsValue) => {
       if (err) {
         return
@@ -103,14 +152,12 @@ export default class OrderMainCtl extends Component {
       let values = {
         ...fieldsValue
       }
-      console.log(values)
 
       try {
         this.setState({
           isLoading: true
         })
-
-        // await this.taskPoolsModel.fetchTaskPoolsData({ pageNum, pageSize, searchArgs: values })
+        await this.orderModel.fetchOrderData({ current, size, ...values })
       } catch (e) {
         message.error(e.message || '出错了，请重试')
       }
@@ -119,9 +166,14 @@ export default class OrderMainCtl extends Component {
       })
     })
   }
-  goDetail = (record) => {
+  goOrderDetail = (record) => {
     this.props.history.push(
-      '/creditGrantingAudit/' + encodeURI(record.flowInstanceId) + `/auditMsg?isAudit=false&taskId=${record.taskId}`
+      `/home/orderManager/orderDetail?id=${record.id}`
+    )
+  }
+  goProDetail = (record) => {
+    this.props.history.push(
+      `/home/orderManager/orderProDetail?id=${record.id}`
     )
   }
   offline = async (record) => {
@@ -140,23 +192,23 @@ export default class OrderMainCtl extends Component {
     })
   }
   async componentDidMount () {
-    const { pageNum, pageSize } = this.props
-    await this.fetchData(pageNum, pageSize)
+    const { current, size } = this.props
+    await this.fetchData(current, size)
   }
 
   onSubmitSearch = async () => {
-    const { pageSize } = this.props
-    this.fetchData(1, pageSize)
+    const { size } = this.props
+    this.fetchData(1, size)
   }
-  onChangePage = (pageNum, pageSize) => {
-    this.fetchData(pageNum, pageSize)
+  onChangePage = (current, size) => {
+    this.fetchData(current, size)
   }
-  onShowSizeChange = (pageNum, pageSize) => {
-    pageNum = 1
-    this.fetchData(pageNum, pageSize)
+  onShowSizeChange = (current, size) => {
+    current = 1
+    this.fetchData(current, size)
   }
   render () {
-    const { pageNum, pageSize, totalCount } = this.props
+    const { current, size, total } = this.props
     const { loading, selectedRowKeys } = this.state
     const rowSelection = {
       selectedRowKeys,
@@ -165,9 +217,9 @@ export default class OrderMainCtl extends Component {
     const hasSelected = selectedRowKeys.length > 0
     return (
       <div>
-        <SearchOrderMainForm hasSelected={hasSelected} loading={loading} onSubmit={this.onSubmitSearch} formRef={(form) => { this.searchOMForm = form }} />
-        <Table rowSelection={rowSelection} scroll={{ x: 'max-content' }} dataSource={data} columns={this.columns} bordered pagination={false} rowKey='id' loading={this.state.isLoading} />
-        <Pagination size='small' onChange={this.onChangePage} total={totalCount} pageSize={pageSize} current={pageNum}
+        <SearchOrderMainForm selectedRowKeys={selectedRowKeys} hasSelected={hasSelected} loading={loading} onSubmit={this.onSubmitSearch} formRef={(form) => { this.searchOMForm = form }} />
+        <Table rowSelection={rowSelection} scroll={{ x: 'max-content' }} dataSource={this.props.records} columns={this.columns} bordered pagination={false} rowKey='id' loading={this.state.isLoading} />
+        <Pagination size='small' onChange={this.onChangePage} total={total} pageSize={size} current={current}
           showSizeChanger showQuickJumper onShowSizeChange={this.onShowSizeChange} />
       </div>
     )

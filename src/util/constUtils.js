@@ -49,5 +49,15 @@ export const proStatus = {
   1: { value: 1, name: '上线' }
 }
 
+/**
+ * 订单状态
+ */
+export const orderStatus = {
+  0: { value: 0, name: '删除' },
+  1: { value: 1, name: '未收货' },
+  2: { value: 2, name: '已确认收货' }
+
+}
+
 export default constUtils
 export { constUtils }

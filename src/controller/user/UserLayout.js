@@ -30,9 +30,6 @@ import logo from './assets/logo.png'
 // )
 
 export default class UserLayout extends Component {
-  componentDidMount () {
-  }
-
   render () {
     const {
       children

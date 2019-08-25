@@ -1,17 +1,23 @@
 import React, { Component } from 'react'
-// import controller from '@symph/joy/controller'
-// import autowire from '@symph/joy/autowire'
+import controller from '@symph/joy/controller'
+import autowire from '@symph/joy/autowire'
 // import { fmtDate } from '../../../util/dateUtils'
-import { Table, Pagination, message, Divider, Modal } from 'antd'
+import { Table, Pagination, message, Modal } from 'antd'
 // import TaskPoolsModel from '../../../model/TaskPoolsModel'
-// import TodoTaskModel from '../../../model/TodoTaskModel'
+import ReportModel from '../../../model/ReportModel'
 import SearchReSaleManForm from '../form/ReSaleManForm'
 const { confirm } = Modal
 
-// @controller(({ }) => {
-//   return {
-//   }
-// })
+@controller(({ report }) => {
+  return {
+    current: report.current,
+    size: report.size,
+    total: report.total,
+    records: report.records,
+    comList: report.comList, // 分公司
+    departList: report.departList // 部门
+  }
+})
 export default class ProductManMainCtl extends Component {
   constructor () {
     super(...arguments)
@@ -20,80 +26,57 @@ export default class ProductManMainCtl extends Component {
     }
     this.columns = [
       {
-        title: '商品编号',
-        dataIndex: 'orderNo',
-        key: 'orderNo'
+        title: '日期',
+        dataIndex: 'orderDate',
+        key: 'orderDate'
       },
       {
-        title: '商品分类',
-        dataIndex: 'customerName',
-        key: 'customerName'
+        title: '订单数量',
+        dataIndex: 'orderNum',
+        key: 'orderNum'
       },
       {
-        title: '商品名称',
-        dataIndex: 'customerID',
-        key: 'customerID'
+        title: '商品数量',
+        dataIndex: 'goodsNum',
+        key: 'goodsNum'
       },
       {
-        title: '商品规格',
-        dataIndex: 'customerPhoneNum',
-        key: 'customerPhoneNum'
+        title: '销售总金额',
+        dataIndex: 'salesAmount',
+        key: 'salesAmount'
       },
       {
-        title: '零售价',
-        dataIndex: 'applyDate',
-        key: 'applyDate'
+        title: '成本总金额',
+        dataIndex: 'costAmount',
+        key: 'costAmount'
       },
       {
-        title: '限购数量',
-        dataIndex: 'auditStatus',
-        key: 'auditStatus'
+        title: '下单员工数量',
+        dataIndex: 'staffNum',
+        key: 'staffNum'
       },
       {
-        title: '上限有效期',
-        dataIndex: 'currentOperatorName',
-        key: 'currentOperatorName'
+        title: '来源分公司数量',
+        dataIndex: 'companyNum',
+        key: 'companyNum'
       },
       {
-        title: '供货商姓名',
-        dataIndex: 'currentOperatorName',
-        key: 'currentOperatorName'
+        title: '来源部门数量',
+        dataIndex: 'departmentNum',
+        key: 'departmentNum'
       },
       {
-        title: '供货商电话',
-        dataIndex: 'currentOperatorName',
-        key: 'currentOperatorName'
-      },
-      {
-        title: '商品状态',
-        dataIndex: 'currentOperatorName',
-        key: 'currentOperatorName'
-      },
-      {
-        title: '操作',
-        dataIndex: 'action',
-        render: (text, record, index) => {
-          return (
-            <div>
-              <span>
-                <a href='javascript:;' onClick={() => this.goDetail(record)}>修改</a>
-              </span>
-              <Divider type={'vertical'} />
-              <span>
-                <a href='javascript:;' onClick={() => this.offline(record)} >下线</a>
-              </span>
-            </div>
-
-          )
-        }
+        title: '销售经理数量',
+        dataIndex: 'salesManagerNum',
+        key: 'salesManagerNum'
       }
     ]
   }
-    // @autowire()
-    // taskPoolsModel: TaskPoolsModel
+    @autowire()
+    reportModel: ReportModel
     // @autowire()
     // todoTaskModel: TodoTaskModel
-    fetchData = (pageNum, pageSize) => {
+    fetchData = (current, size) => {
       this.searchRSMForm.props.form.validateFields(async (err, fieldsValue) => {
         if (err) {
           return
@@ -108,7 +91,7 @@ export default class ProductManMainCtl extends Component {
             isLoading: true
           })
 
-          await this.taskPoolsModel.fetchTaskPoolsData({ pageNum, pageSize, searchArgs: values })
+          await this.reportModel.fetchSaleData({ current, size, ...values })
         } catch (e) {
           message.error(e.message || '出错了，请重试')
         }
@@ -138,28 +121,29 @@ export default class ProductManMainCtl extends Component {
       })
     }
     async componentDidMount () {
-      const { pageNum, pageSize } = this.props
-      await this.fetchData(pageNum, pageSize)
+      const { current, size } = this.props
+      await this.reportModel.fetchCompany()
+      await this.fetchData(current, size)
     }
 
     onSubmitSearch = async () => {
-      const { pageSize } = this.props
-      this.fetchData(1, pageSize)
+      const { size } = this.props
+      this.fetchData(1, size)
     }
-    onChangePage = (pageNum, pageSize) => {
-      this.fetchData(pageNum, pageSize)
+    onChangePage = (current, size) => {
+      this.fetchData(current, size)
     }
-    onShowSizeChange = (pageNum, pageSize) => {
-      pageNum = 1
-      this.fetchData(pageNum, pageSize)
+    onShowSizeChange = (current, size) => {
+      current = 1
+      this.fetchData(current, size)
     }
     render () {
-      const { pageNum, pageSize, totalCount } = this.props
+      const { current, size, total } = this.props
       return (
         <div>
           <SearchReSaleManForm onSubmit={this.onSubmitSearch} formRef={(form) => { this.searchRSMForm = form }} />
-          <Table scroll={{ x: 'max-content' }} dataSource={[]} columns={this.columns} bordered pagination={false} rowKey='id' loading={this.state.isLoading} />
-          <Pagination size='small' onChange={this.onChangePage} total={totalCount} pageSize={pageSize} current={pageNum}
+          <Table scroll={{ x: 'max-content' }} dataSource={this.props.records} columns={this.columns} bordered pagination={false} rowKey={(record, index) => { return (`销售报表${index}`) }} loading={this.state.isLoading} />
+          <Pagination size='small' onChange={this.onChangePage} total={total} pageSize={size} current={current}
             showSizeChanger showQuickJumper onShowSizeChange={this.onShowSizeChange} />
         </div>
       )

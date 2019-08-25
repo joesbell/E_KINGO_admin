@@ -1,9 +1,11 @@
 import React, { Component } from 'react'
 // import controller from '@symph/joy/controller'
-// import autowire from '@symph/joy/autowire'
+import autowire from '@symph/joy/autowire'
 import SearchForm, { Row, Col } from '../../../component/SearchForm'
 import Form from '../../../component/Form'
-import { Button, Input, Select, DatePicker } from 'antd'
+import OrderModel from '../../../model/OrderModel'
+
+import { Button, Input, Select, DatePicker, message } from 'antd'
 const { Option } = Select
 class OrderMainForm extends Component {
   onSubmit = (e) => {
@@ -12,11 +14,32 @@ class OrderMainForm extends Component {
       this.props.onSubmit()
     }
   }
-
+  @autowire()
+  orderModel: OrderModel
   handleReset = () => {
     this.props.form.resetFields()
     if (typeof this.props.onSubmit === 'function') {
       this.props.onSubmit()
+    }
+  }
+  // 批量确认收货
+  allSure=async () => {
+    try {
+      await this.orderModel.allSure({ id: this.props.selectedRowKeys })
+      Promise.all([this.props.onSubmit(), message.success('收货成功')])
+    } catch (e) {
+      message.error(e.message || '出错了，请重试')
+    }
+
+    // await this.
+  }
+  // 批量删除订单
+  allDelOrder = async () => {
+    try {
+      await this.orderModel.allDelOrder({ id: this.props.selectedRowKeys })
+      Promise.all([this.props.onSubmit(), message.success('删除成功')])
+    } catch (e) {
+      message.error(e.message || '出错了，请重试')
     }
   }
   addProduct = () => {
@@ -36,7 +59,7 @@ class OrderMainForm extends Component {
               labelAlign='left'
             >
               {
-                getFieldDecorator('customerName')(<Input allowClear placeholder='请输入' />)
+                getFieldDecorator('staffName')(<Input allowClear placeholder='请输入' />)
               }
             </Form.Item>
           </Col>
@@ -46,7 +69,7 @@ class OrderMainForm extends Component {
               labelAlign='left'
             >
               {
-                getFieldDecorator('customerName')(<Input allowClear placeholder='请输入' />)
+                getFieldDecorator('staffPhone')(<Input allowClear placeholder='请输入' />)
               }
             </Form.Item>
           </Col>
@@ -56,11 +79,11 @@ class OrderMainForm extends Component {
               labelAlign='left'
             >
               {
-                getFieldDecorator('flowType', {
+                getFieldDecorator('orderStatus', {
                 })(<Select placeholder='全部' allowClear>
-                  {/* <Option key="" >全部</Option> */}
-                  <Option key='0' >确认收货</Option>
-                  <Option key='1' >未收货</Option>
+                  <Option key='0' value={0} >删除</Option>
+                  <Option key='1' value={1}>未收货</Option>
+                  <Option key='2' value={2}>确认收货</Option>
                 </Select>)
 
               }
@@ -96,7 +119,7 @@ class OrderMainForm extends Component {
               </Form.Item>
             </Form.Item>
           </Col>
-          <Col xs={24} sm={24} md={24} lg={12} xl={12} xxl={12}>
+          <Col xs={24} sm={24} md={24} lg={24} xl={24} xxl={24}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '4px', marginBottom: '10px' }}>
               <div>
                 <Button
@@ -107,9 +130,9 @@ class OrderMainForm extends Component {
 
               </div>
               <div>
-                <Button style={{ marginLeft: '24px' }} type='primary' onClick={this.addProduct}>确认收货</Button>
-                <Button style={{ marginLeft: '24px' }} type='error' onClick={this.addProduct}>删除</Button>
-                <Button style={{ marginLeft: '24px' }} type='primary' disabled={!this.props.hasSelected} loading={this.props.loading} onClick={this.addProduct}>导出</Button>
+                <Button style={{ marginLeft: '24px' }} type='primary' disabled={!this.props.hasSelected} onClick={this.allSure}>确认收货</Button>
+                <Button style={{ marginLeft: '24px' }} type='danger' disabled={!this.props.hasSelected} onClick={this.allDelOrder}>删除</Button>
+                <Button style={{ marginLeft: '24px' }} onClick={this.addProduct}>导出</Button>
 
                 {/* <Button style={{ marginLeft: '24px' }} onClick={this.handleReset}>导入</Button> */}
               </div>

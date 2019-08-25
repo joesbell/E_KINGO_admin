@@ -19,6 +19,11 @@ class LoginPage extends Component {
   //   login: true,
   //   submitting: true
   // }
+  componentDidMount () {
+    if (window.sessionStorage.getItem('token')) {
+      this.props.history.push('/home')
+    }
+  }
   @autowire()
   userModel: UserModel
 

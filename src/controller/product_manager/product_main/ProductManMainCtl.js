@@ -27,8 +27,8 @@ export default class ProductManMainCtl extends Component {
     this.columns = [
       {
         title: '商品编号',
-        dataIndex: 'number',
-        key: 'number'
+        dataIndex: 'goodsNumber',
+        key: 'goodsNumber'
       },
       {
         title: '商品分类',
@@ -144,11 +144,6 @@ export default class ProductManMainCtl extends Component {
         isLoading: false
       })
     })
-  }
-  goDetail = (record) => {
-    this.props.history.push(
-      '/creditGrantingAudit/' + encodeURI(record.flowInstanceId) + `/auditMsg?isAudit=false&taskId=${record.taskId}`
-    )
   }
   offline = async (record) => {
     const { current, size } = this.props
