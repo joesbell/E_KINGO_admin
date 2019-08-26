@@ -27,7 +27,7 @@ class SupplierSearchForm extends Component {
     const { form } = this.props
     const { getFieldDecorator } = form
     return (
-      <SearchForm onSubmit={this.onSubmit}>
+      <SearchForm autoComplete='off' onSubmit={this.onSubmit}>
         <Row>
           <Col>
             <Form.Item
@@ -45,7 +45,7 @@ class SupplierSearchForm extends Component {
               labelAlign='left'
             >
               {
-                getFieldDecorator('name')(<Input allowClear placeholder='请输入' />)
+                getFieldDecorator('phone')(<Input allowClear placeholder='请输入' />)
               }
             </Form.Item>
           </Col>

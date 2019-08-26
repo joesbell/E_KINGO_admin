@@ -150,7 +150,9 @@ export default class OrderMainCtl extends Component {
         return
       }
       let values = {
-        ...fieldsValue
+        ...fieldsValue,
+        startDate: fmtDate(fieldsValue['startDate'], 'YYYY-MM-DD 00:00:00'),
+        endDate: fmtDate(fieldsValue['endDate'], 'YYYY-MM-DD 23:59:59')
       }
 
       try {

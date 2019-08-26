@@ -2,21 +2,21 @@ import React, { Component } from 'react'
 import controller from '@symph/joy/controller'
 import autowire from '@symph/joy/autowire'
 // import { fmtDate } from '../../../util/dateUtils'
-import { Table, Pagination, message, Divider, Modal } from 'antd'
+import { Table, Pagination, message, Modal, Divider } from 'antd'
 // import TaskPoolsModel from '../../../model/TaskPoolsModel'
 import SupplierModel from '../../../model/SupplierModel'
-// import { constUtils, proStatus } from '../../../util/constUtils'
 import SearchSupplierForm from './SupplierSearchForm'
 const { confirm } = Modal
 
 @controller(({ sup }) => {
   return {
-    curPage: sup.curPage,
-    pageSize: sup.pageSize,
+    current: sup.current,
+    size: sup.size,
+    total: sup.total,
     records: sup.records
   }
 })
-export default class supplierMainCtl extends Component {
+export default class SupplierMainCtl extends Component {
   constructor () {
     super(...arguments)
     this.state = {
@@ -40,8 +40,8 @@ export default class supplierMainCtl extends Component {
       },
       {
         title: '公司名称',
-        dataIndex: 'address1',
-        key: 'address1'
+        dataIndex: 'companyName',
+        key: 'companyName'
       },
       {
         title: '地址',
@@ -60,11 +60,11 @@ export default class supplierMainCtl extends Component {
           return (
             <div>
               <span>
-                <a href='javascript:;' onClick={() => this.goDetail(record)}>修改</a>
+                <a href='javascript:;' onClick={() => this.changeForm(record)}>修改</a>
               </span>
               <Divider type={'vertical'} />
               <span>
-                <a href='javascript:;' onClick={() => this.offline(record)} >删除</a>
+                <a href='javascript:;' onClick={() => this.delete(record)} >删除</a>
               </span>
             </div>
 
@@ -73,12 +73,11 @@ export default class supplierMainCtl extends Component {
       }
     ]
   }
-  // @autowire()
-  // taskPoolsModel: TaskPoolsModel
   @autowire()
   supplierModel: SupplierModel
-  fetchData = (curPage, pageSize) => {
-    this.searchSpForm.props.form.validateFields(async (err, fieldsValue) => {
+
+  fetchData = (current, size) => {
+    this.searchSLForm.props.form.validateFields(async (err, fieldsValue) => {
       if (err) {
         return
       }
@@ -91,7 +90,7 @@ export default class supplierMainCtl extends Component {
           isLoading: true
         })
 
-        await this.supplierModel.fetchSupplierData({ curPage, pageSize, ...values })
+        await this.supplierModel.fetchSupplierData({ current, size, ...values })
       } catch (e) {
         message.error(e.message || '出错了，请重试')
       }
@@ -100,20 +99,26 @@ export default class supplierMainCtl extends Component {
       })
     })
   }
-  goDetail = (record) => {
+  changeForm = (record) => {
     this.props.history.push(
-      '/creditGrantingAudit/' + encodeURI(record.flowInstanceId) + `/auditMsg?isAudit=false&taskId=${record.taskId}`
+      `/home/supplierManager/supplierForm?id=${record.id}&&isRevise=true`
     )
   }
-  offline = async (record) => {
+  delete = (record) => {
+    let _this = this
     confirm({
-      title: '确定下线此商品?',
-      content: 'Some descriptions',
+      title: '删除',
+      content: '确定删除此供货商?',
       okText: '确定',
       okType: 'danger',
       cancelText: '取消',
-      onOk () {
-        console.log('OK')
+      async onOk () {
+        try {
+          await _this.supplierModel.delSupplierData(record.id)
+          await Promise.all([message.success('删除成功'), Modal.destroyAll(), _this.onSubmitSearch()])
+        } catch (e) {
+          message.error(e.message || '出错了，请重试')
+        }
       },
       onCancel () {
         console.log('Cancel')
@@ -121,28 +126,28 @@ export default class supplierMainCtl extends Component {
     })
   }
   async componentDidMount () {
-    const { curPage, pageSize } = this.props
-    await this.fetchData(curPage, pageSize)
+    const { current, size } = this.props
+    await this.fetchData(current, size)
   }
 
   onSubmitSearch = async () => {
-    const { pageSize } = this.props
-    this.fetchData(1, pageSize)
+    const { size } = this.props
+    this.fetchData(1, size)
   }
-  onChangePage = (curPage, pageSize) => {
-    this.fetchData(curPage, pageSize)
+  onChangePage = (current, size) => {
+    this.fetchData(current, size)
   }
-  onShowSizeChange = (curPage, pageSize) => {
-    curPage = 1
-    this.fetchData(curPage, pageSize)
+  onShowSizeChange = (current, size) => {
+    current = 1
+    this.fetchData(current, size)
   }
   render () {
-    const { curPage, pageSize, totalCount, records } = this.props
+    const { current, size, total } = this.props
     return (
       <div>
-        <SearchSupplierForm onSubmit={this.onSubmitSearch} formRef={(form) => { this.searchSpForm = form }} />
-        <Table scroll={{ x: 'max-content' }} dataSource={records} columns={this.columns} bordered pagination={false} rowKey='id' loading={this.state.isLoading} />
-        <Pagination size='small' onChange={this.onChangePage} total={totalCount} pageSize={pageSize} current={curPage}
+        <SearchSupplierForm onSubmit={this.onSubmitSearch} formRef={(form) => { this.searchSLForm = form }} />
+        <Table scroll={{ x: 'max-content' }} dataSource={this.props.records} columns={this.columns} bordered pagination={false} rowKey='id' loading={this.state.isLoading} />
+        <Pagination size='small' onChange={this.onChangePage} total={total} pageSize={size} current={current}
           showSizeChanger showQuickJumper onShowSizeChange={this.onShowSizeChange} />
       </div>
     )

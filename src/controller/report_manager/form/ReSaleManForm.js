@@ -1,48 +1,67 @@
 import React, { Component } from 'react'
 import controller from '@symph/joy/controller'
 import autowire from '@symph/joy/autowire'
-import ReportModel from '../../../model/ReportModel'
+import saleReportModel from '../../../model/saleReportModel'
 
 import SearchForm, { Row, Col } from '../../../component/SearchForm'
 import Form from '../../../component/Form'
 import { Button, Select } from 'antd'
 const { Option } = Select
 
-@controller(({ report }) => {
+@controller(({ saleReport }) => {
   return {
-    comList: report.comList, // 分公司
-    departList: report.departList // 部门
+    comList: saleReport.comList, // 分公司
+    departList: saleReport.departList, // 部门
+    saleCom: saleReport.saleCom,
+    saleDepart: saleReport.saleDepart,
+    ManagerList: saleReport.ManagerList// 销售经理
   }
 })
 class ReSaleManForm extends Component {
   @autowire()
-  reportModel: ReportModel
-    onSubmit = (e) => {
-      e.preventDefault()
-      if (typeof this.props.onSubmit === 'function') {
-        this.props.onSubmit()
-      }
+  saleReportModel: saleReportModel
+  onSubmit = (e) => {
+    e.preventDefault()
+    if (typeof this.props.onSubmit === 'function') {
+      this.props.onSubmit()
     }
+  }
 
-    handleReset = () => {
-      this.props.form.resetFields()
-      if (typeof this.props.onSubmit === 'function') {
-        this.props.onSubmit()
-      }
+  handleReset = async () => {
+    await this.saleReportModel.clearDepart()
+    await this.saleReportModel.clearManager()
+    await this.saleReportModel.selectSaleCompany(null)
+    await this.saleReportModel.selectSaleDepart(null)
+    await this.props.form.resetFields()
+
+    if (typeof this.props.onSubmit === 'function') {
+      this.props.onSubmit()
     }
-    addProduct = () => {
-      this.props.history.push(
-        '/home/productManager/productForm?isRevise=false'
-      )
-    }
-  changeCompany=async (value) => {
-    await this.reportModel.fetchDepart({ companyId: value })
+  }
+  addProduct = () => {
+    this.props.history.push(
+      '/home/productManager/productForm?isRevise=false'
+    )
+  }
+  changeSaleCompany = async (value) => {
+    await this.saleReportModel.clearDepart()
+    await this.saleReportModel.selectSaleCompany(value)
+    await this.saleReportModel.selectSaleDepart(null)
+    this.props.form.resetFields('departmentId')
+    this.props.form.resetFields('salesManagerId')
+    await this.saleReportModel.fetchDepart({ companyId: value })
+  }
+  changeSaleDepart = async (value) => {
+    await this.saleReportModel.clearManager()
+    this.saleReportModel.selectSaleDepart(value)
+    this.props.form.resetFields('salesManagerId')
+    await this.saleReportModel.fetchManager({ companyId: this.props.saleCom, departmentId: value })
   }
   render () {
     const { form } = this.props
     const { getFieldDecorator } = form
     return (
-      <SearchForm onSubmit={this.onSubmit}>
+      <SearchForm autoComplete='off' onSubmit={this.onSubmit}>
         <Row>
           <Col>
             <Form.Item
@@ -66,7 +85,7 @@ class ReSaleManForm extends Component {
             >
               {
                 getFieldDecorator('companyId', {
-                })(<Select placeholder='全部' allowClear onChange={this.changeCompany}>
+                })(<Select placeholder='全部' allowClear onChange={this.changeSaleCompany}>
                   {
                     (this.props.comList || []).map((item) => {
                       return (
@@ -85,7 +104,7 @@ class ReSaleManForm extends Component {
             >
               {
                 getFieldDecorator('departmentId', {
-                })(<Select placeholder='全部' allowClear>
+                })(<Select placeholder='全部' disabled={!this.props.saleCom} allowClear onChange={this.changeSaleDepart}>
                   {
                     (this.props.departList || []).map((item) => {
                       return (
@@ -105,10 +124,15 @@ class ReSaleManForm extends Component {
             >
               {
                 getFieldDecorator('salesManagerId', {
-                })(<Select placeholder='全部' allowClear>
-                  {/* <Option key="" >全部</Option> */}
-                  <Option key='0' >上线</Option>
-                  <Option key='1' >下线</Option>
+                })(<Select placeholder='全部' disabled={!this.props.saleDepart} allowClear>
+                  {
+                    (this.props.ManagerList || []).map((item) => {
+                      return (
+                        <Option key={item.id} value={item.id} >{item.name}</Option>
+                      )
+                    })
+                  }
+
                 </Select>)
 
               }
@@ -120,6 +144,7 @@ class ReSaleManForm extends Component {
                 <Button
                   type='primary'
                   htmlType='submit'
+                  icon='search'
                 >查询</Button>
                 <Button style={{ marginLeft: '24px' }} onClick={this.handleReset}>重置</Button>
 

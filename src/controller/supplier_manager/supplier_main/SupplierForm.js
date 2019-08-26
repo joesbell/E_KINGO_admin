@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import controller from '@symph/joy/controller'
 // import autowire from '@symph/joy/autowire'
+import { parse } from 'querystring'
+
 import SubmitForm, { Row, Col, ActionsItem } from '../../../component/SubmitForm'
 import Form from '../../../component/Form'
 import {
@@ -22,9 +24,11 @@ const wrapperCol = {
   xxl: { span: 8, offset: 8 }
 }
 
-@controller(({ sup }, { match }) => {
+@controller(() => {
+  let query = parse(window.location.search.slice(1))
   return {
-    supRecords: sup.records
+    id: query.id,
+    isRevise: query.isRevise
   }
 })
 class SupplierForm extends Component {
@@ -43,7 +47,7 @@ class SupplierForm extends Component {
     const { form } = this.props
     const { getFieldDecorator } = form
     return (
-      <SubmitForm onSubmit={this.onSubmit}>
+      <SubmitForm autoComplete='off' onSubmit={this.onSubmit}>
         <Row>
           <Col>
             <Form.Item
@@ -71,6 +75,10 @@ class SupplierForm extends Component {
                     {
                       required: true,
                       message: '不能为空'
+                    },
+                    {
+                      pattern: /^1(3|4|5|6|7|8|9)\d{9}/g,
+                      message: '请输入正确手机号'
                     }
                   ]
                 })(<Input allowClear />)
@@ -82,7 +90,7 @@ class SupplierForm extends Component {
               label='公司名称'
             >
               {
-                getFieldDecorator('namepe', {
+                getFieldDecorator('companyName', {
                   rules: [
                     {
                       required: true,

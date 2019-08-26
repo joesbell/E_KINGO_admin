@@ -4,18 +4,19 @@ import autowire from '@symph/joy/autowire'
 // import { fmtDate } from '../../../util/dateUtils'
 import { Table, Pagination, message, Modal } from 'antd'
 // import TaskPoolsModel from '../../../model/TaskPoolsModel'
-import ReportModel from '../../../model/ReportModel'
+import saleReportModel from '../../../model/saleReportModel'
 import SearchReSaleManForm from '../form/ReSaleManForm'
 const { confirm } = Modal
 
-@controller(({ report }) => {
+@controller(({ saleReport }) => {
   return {
-    current: report.current,
-    size: report.size,
-    total: report.total,
-    records: report.records,
-    comList: report.comList, // 分公司
-    departList: report.departList // 部门
+    current: saleReport.current,
+    size: saleReport.size,
+    total: saleReport.total,
+    saleRecords: saleReport.saleRecords,
+    comList: saleReport.comList, // 分公司
+    departList: saleReport.departList, // 部门
+    ManagerList: null// 销售经理
   }
 })
 export default class ProductManMainCtl extends Component {
@@ -72,80 +73,80 @@ export default class ProductManMainCtl extends Component {
       }
     ]
   }
-    @autowire()
-    reportModel: ReportModel
-    // @autowire()
-    // todoTaskModel: TodoTaskModel
-    fetchData = (current, size) => {
-      this.searchRSMForm.props.form.validateFields(async (err, fieldsValue) => {
-        if (err) {
-          return
-        }
-        let values = {
-          ...fieldsValue
-        }
-        console.log(values)
+  @autowire()
+  saleReportModel: saleReportModel
+  // @autowire()
+  // todoTaskModel: TodoTaskModel
+  fetchData = (current, size) => {
+    this.searchRSMForm.props.form.validateFields(async (err, fieldsValue) => {
+      if (err) {
+        return
+      }
+      let values = {
+        ...fieldsValue
+      }
+      console.log(values)
 
-        try {
-          this.setState({
-            isLoading: true
-          })
-
-          await this.reportModel.fetchSaleData({ current, size, ...values })
-        } catch (e) {
-          message.error(e.message || '出错了，请重试')
-        }
+      try {
         this.setState({
-          isLoading: false
+          isLoading: true
         })
-      })
-    }
-    goDetail = (record) => {
-      this.props.history.push(
-        '/creditGrantingAudit/' + encodeURI(record.flowInstanceId) + `/auditMsg?isAudit=false&taskId=${record.taskId}`
-      )
-    }
-    offline = async (record) => {
-      confirm({
-        title: '确定下线此商品?',
-        content: 'Some descriptions',
-        okText: '确定',
-        okType: 'danger',
-        cancelText: '取消',
-        onOk () {
-          console.log('OK')
-        },
-        onCancel () {
-          console.log('Cancel')
-        }
-      })
-    }
-    async componentDidMount () {
-      const { current, size } = this.props
-      await this.reportModel.fetchCompany()
-      await this.fetchData(current, size)
-    }
 
-    onSubmitSearch = async () => {
-      const { size } = this.props
-      this.fetchData(1, size)
-    }
-    onChangePage = (current, size) => {
-      this.fetchData(current, size)
-    }
-    onShowSizeChange = (current, size) => {
-      current = 1
-      this.fetchData(current, size)
-    }
-    render () {
-      const { current, size, total } = this.props
-      return (
-        <div>
-          <SearchReSaleManForm onSubmit={this.onSubmitSearch} formRef={(form) => { this.searchRSMForm = form }} />
-          <Table scroll={{ x: 'max-content' }} dataSource={this.props.records} columns={this.columns} bordered pagination={false} rowKey={(record, index) => { return (`销售报表${index}`) }} loading={this.state.isLoading} />
-          <Pagination size='small' onChange={this.onChangePage} total={total} pageSize={size} current={current}
-            showSizeChanger showQuickJumper onShowSizeChange={this.onShowSizeChange} />
-        </div>
-      )
-    }
+        await this.saleReportModel.fetchSaleData({ current, size, ...values })
+      } catch (e) {
+        message.error(e.message || '出错了，请重试')
+      }
+      this.setState({
+        isLoading: false
+      })
+    })
+  }
+  goDetail = (record) => {
+    this.props.history.push(
+      '/creditGrantingAudit/' + encodeURI(record.flowInstanceId) + `/auditMsg?isAudit=false&taskId=${record.taskId}`
+    )
+  }
+  offline = async (record) => {
+    confirm({
+      title: '确定下线此商品?',
+      content: 'Some descriptions',
+      okText: '确定',
+      okType: 'danger',
+      cancelText: '取消',
+      onOk () {
+        console.log('OK')
+      },
+      onCancel () {
+        console.log('Cancel')
+      }
+    })
+  }
+  async componentDidMount () {
+    const { current, size } = this.props
+    await this.saleReportModel.fetchCompany()
+    await this.fetchData(current, size)
+  }
+
+  onSubmitSearch = async () => {
+    const { size } = this.props
+    this.fetchData(1, size)
+  }
+  onChangePage = (current, size) => {
+    this.fetchData(current, size)
+  }
+  onShowSizeChange = (current, size) => {
+    current = 1
+    this.fetchData(current, size)
+  }
+  render () {
+    const { current, size, total } = this.props
+    return (
+      <div>
+        <SearchReSaleManForm onSubmit={this.onSubmitSearch} formRef={(form) => { this.searchRSMForm = form }} />
+        <Table scroll={{ x: 'max-content' }} dataSource={this.props.saleRecords} columns={this.columns} bordered pagination={false} rowKey={(record, index) => { return (`销售报表${index}`) }} loading={this.state.isLoading} />
+        <Pagination size='small' onChange={this.onChangePage} total={total} pageSize={size} current={current}
+          showSizeChanger showQuickJumper onShowSizeChange={this.onShowSizeChange} />
+      </div>
+    )
+  }
 }

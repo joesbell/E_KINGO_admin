@@ -3,24 +3,25 @@ import { callApi } from '../util/api'
 
 @model()
 export default class SupplierModel {
-  namespace = 'sup'
+    namespace = 'sup'
 
-  initState = {
-    curPage: 1,
-    pageSize: 10,
-    AllSupplier: null
-  }
+    initState = {
+      current: 1,
+      size: 10
+    }
 
-  async fetchSupplierData (val) {
-    let { data: { data } } = await callApi('/suppler/query', { ...val }, { method: 'POST' })
-    this.setState({
-      ...data
-    })
-  }
-  async fetchAllSupplier () {
-    let { data: { data } } = await callApi('/mallCommon/querySuppler', {}, { method: 'POST' })
-    this.setState({
-      AllSupplier: data
-    })
-  }
+    async fetchSupplierData (val) {
+      let { data: { data } } = await callApi('/suppler/query', { ...val }, { method: 'POST' })
+      this.setState({
+        ...data
+      })
+    }
+
+    async delSupplierData (val) {
+      await callApi('/suppler/delete', { id: val }, { method: 'POST' })
+    }
+
+    async addSuplier (val) {
+      await callApi('/suppler/insert', { ...val }, { method: 'POST' })
+    }
 }

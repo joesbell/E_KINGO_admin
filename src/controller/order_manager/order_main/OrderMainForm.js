@@ -23,7 +23,7 @@ class OrderMainForm extends Component {
     }
   }
   // 批量确认收货
-  allSure=async () => {
+  allSure = async () => {
     try {
       await this.orderModel.allSure({ id: this.props.selectedRowKeys })
       Promise.all([this.props.onSubmit(), message.success('收货成功')])
@@ -125,6 +125,7 @@ class OrderMainForm extends Component {
                 <Button
                   type='primary'
                   htmlType='submit'
+                  icon='search'
                 >查询</Button>
                 <Button style={{ marginLeft: '24px' }} onClick={this.handleReset}>重置</Button>
 

@@ -62,6 +62,7 @@ class ProMainForm extends Component {
                 <Button
                   type='primary'
                   htmlType='submit'
+                  icon='search'
                 >查询</Button>
                 <Button style={{ marginLeft: '24px' }} onClick={this.handleReset}>重置</Button>
 
