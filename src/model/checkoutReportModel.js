@@ -24,6 +24,10 @@ export default class checkoutReportModel {
     })
   }
 
+  // 导出报表
+  async exportCheckout (val) {
+    await callApi('/report/exportOutStock', { ...val }, { method: 'GET' })
+  }
   // 出库报表分公司选择
   async selectCheckoutCompany (val) {
     this.setState({

@@ -30,6 +30,10 @@ export default class saleReportModel {
     })
   }
 
+  // 导出报表
+  async exportSale (val) {
+    await callApi('/report/exportSalesReport', { ...val }, { method: 'GET' })
+  }
   // 部门
   async fetchDepart (val) {
     let { data: { data } } = await callApi('/mallCommon/queryDepartment', { ...val }, { method: 'POST' })

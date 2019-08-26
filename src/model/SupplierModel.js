@@ -7,7 +7,8 @@ export default class SupplierModel {
 
     initState = {
       current: 1,
-      size: 10
+      size: 10,
+      supplierFormData: null
     }
 
     async fetchSupplierData (val) {
@@ -20,8 +21,17 @@ export default class SupplierModel {
     async delSupplierData (val) {
       await callApi('/suppler/delete', { id: val }, { method: 'POST' })
     }
+    async getsupplierForm (val) {
+      let { data: { data } } = await callApi('/suppler/get', { id: val }, { method: 'GET' })
+      this.setState({
+        supplierFormData: data
+      })
+    }
 
     async addSuplier (val) {
       await callApi('/suppler/insert', { ...val }, { method: 'POST' })
+    }
+    async updateSuplier (val) {
+      await callApi('/suppler/update', { ...val }, { method: 'POST' })
     }
 }

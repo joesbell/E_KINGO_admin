@@ -32,6 +32,10 @@ export default class OrderModel {
     async sure (val) {
       await callApi('/order/confirm', { ...val }, { method: 'POST' })
     }
+    // 导出
+    async exportOrder (val) {
+      await callApi('/order/exportOrder', { ...val }, { method: 'GET' })
+    }
     // 删除
     async delOrder (val) {
       await callApi('/order/delete', { ...val }, { method: 'POST' })

@@ -9,11 +9,12 @@ import { PageBodyCard } from '../../../component/Card'
 import SubmitSupplierForm from './SupplierForm'
 import { parse } from 'querystring'
 
-@controller(() => {
+@controller(({ sup }) => {
   let query = parse(window.location.search.slice(1))
   return {
     id: query.id,
-    isRevise: query.isRevise
+    isRevise: query.isRevise,
+    supplierFormData: sup.supplierFormData
   }
 })
 export default class SupplierFormCrl extends Component {
@@ -24,6 +25,22 @@ export default class SupplierFormCrl extends Component {
   supplierModel: SupplierModel
 
   async componentDidMount () {
+    if (this.props.isRevise === 'true') {
+      try {
+        this.setState({
+          isLoading: true
+        })
+        await this.supplierModel.getsupplierForm(this.props.id)
+        await ['name', 'phone', 'companyName', 'address', 'remark'].forEach(data => {
+          this.SubmitSpForm.props.form.setFieldsValue({ [data]: this.props.supplierFormData[data] })
+        })
+      } catch (e) {
+        message.error(e.message || '出错了，请重试')
+      }
+      this.setState({
+        isLoading: false
+      })
+    }
   }
 
   goBack = async () => {
@@ -38,17 +55,29 @@ export default class SupplierFormCrl extends Component {
       if (err) {
         return
       }
-      let values = {
-        ...fieldsValue
+      let values
+      if (this.props.id) {
+        values = {
+          id: this.props.id,
+          ...fieldsValue
+        }
+      } else {
+        values = {
+          ...fieldsValue
+        }
       }
+
       try {
         this.setState({
           isLoading: true
         })
-        console.log(values)
-        await this.supplierModel.addSuplier({ ...values })
+        if (this.props.id) {
+          await this.supplierModel.updateSuplier({ ...values })
+        } else {
+          await this.supplierModel.addSuplier({ ...values })
+        }
 
-        await Promise.all([this.setState({ isLoading: false }), this.goBack(), message.success('新增成功')])
+        await Promise.all([this.setState({ isLoading: false }), this.goBack(), message.success(this.props.id ? '修改成功' : '新增成功')])
       } catch (e) {
         message.error(e.message || '出错了，请重试')
         this.setState({

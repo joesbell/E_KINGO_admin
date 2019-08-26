@@ -26,7 +26,9 @@ class ReSaleManForm extends Component {
       this.props.onSubmit()
     }
   }
-
+  exportSale=() => {
+    this.props.exportSale()
+  }
   handleReset = async () => {
     await this.saleReportModel.clearDepart()
     await this.saleReportModel.clearManager()
@@ -150,7 +152,9 @@ class ReSaleManForm extends Component {
 
               </div>
               <div>
-                <Button style={{ marginLeft: '24px' }} type='primary' onClick={this.addProduct}>导出</Button>
+                <Button style={{ marginLeft: '24px' }} type='primary' onClick={this.exportSale} icon='download' >
+                  导出
+                </Button>
                 {/* <Button style={{ marginLeft: '24px' }} onClick={this.handleReset}>导入</Button> */}
               </div>
             </div>

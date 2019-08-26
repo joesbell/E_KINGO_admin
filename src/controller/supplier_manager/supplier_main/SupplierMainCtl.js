@@ -25,8 +25,13 @@ export default class SupplierMainCtl extends Component {
     this.columns = [
       {
         title: '序号',
-        dataIndex: 'id',
-        key: 'id'
+        dataIndex: 'index',
+        key: 'index',
+        render: (text, record, index) => {
+          return (
+            index + 1
+          )
+        }
       },
       {
         title: '供货商姓名',

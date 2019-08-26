@@ -97,6 +97,31 @@ export default class ReCheckoutCtl extends Component {
       '/creditGrantingAudit/' + encodeURI(record.flowInstanceId) + `/auditMsg?isAudit=false&taskId=${record.taskId}`
     )
   }
+  exportCheckout=() => {
+    this.searchRCForm.props.form.validateFields(async (err, fieldsValue) => {
+      if (err) {
+        return
+      }
+      let values = {
+        ...fieldsValue,
+        startDate: fmtDate(fieldsValue['startDate'], 'YYYY-MM-DD 00:00:00'),
+        endDate: fmtDate(fieldsValue['endDate'], 'YYYY-MM-DD 23:59:59')
+      }
+
+      try {
+        this.setState({
+          isLoading: true
+        })
+
+        await this.checkoutReportModel.exportCheckout({ ...values })
+      } catch (e) {
+        message.error(e.message || '出错了，请重试')
+      }
+      this.setState({
+        isLoading: false
+      })
+    })
+  }
   offline = async (record) => {
     confirm({
       title: '确定下线此商品?',
@@ -133,7 +158,7 @@ export default class ReCheckoutCtl extends Component {
     const { current, size, total } = this.props
     return (
       <div>
-        <SearchReCheckoutForm onSubmit={this.onSubmitSearch} formRef={(form) => { this.searchRCForm = form }} />
+        <SearchReCheckoutForm exportCheckout={this.exportCheckout} onSubmit={this.onSubmitSearch} formRef={(form) => { this.searchRCForm = form }} />
         <Table scroll={{ x: 'max-content' }} dataSource={this.props.checkoutRecords} columns={this.columns} bordered pagination={false} rowKey={(record, index) => { return (`出库报表${index}`) }} loading={this.state.isLoading} />
         <Pagination size='small' onChange={this.onChangePage} total={total} pageSize={size} current={current}
           showSizeChanger showQuickJumper onShowSizeChange={this.onShowSizeChange} />

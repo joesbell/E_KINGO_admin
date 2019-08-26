@@ -26,7 +26,9 @@ class ReCheckoutForm extends Component {
       this.props.onSubmit()
     }
   }
-
+  exportCheckout = () => {
+    this.props.exportCheckout()
+  }
   handleReset = async () => {
     await this.checkoutReportModel.clearDepart()
     await this.checkoutReportModel.clearManager()
@@ -160,7 +162,9 @@ class ReCheckoutForm extends Component {
 
               </div>
               <div>
-                <Button style={{ marginLeft: '24px' }} type='primary' onClick={this.addProduct}>导出</Button>
+                <Button style={{ marginLeft: '24px' }} type='primary' onClick={this.exportCheckout} icon='download' >
+                  导出
+                </Button>
                 {/* <Button style={{ marginLeft: '24px' }} onClick={this.handleReset}>导入</Button> */}
               </div>
             </div>

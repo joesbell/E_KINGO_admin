@@ -85,7 +85,6 @@ export default class ProductManMainCtl extends Component {
       let values = {
         ...fieldsValue
       }
-      console.log(values)
 
       try {
         this.setState({
@@ -126,7 +125,29 @@ export default class ProductManMainCtl extends Component {
     await this.saleReportModel.fetchCompany()
     await this.fetchData(current, size)
   }
+  exportSale=() => {
+    this.searchRSMForm.props.form.validateFields(async (err, fieldsValue) => {
+      if (err) {
+        return
+      }
+      let values = {
+        ...fieldsValue
+      }
 
+      try {
+        this.setState({
+          isLoading: true
+        })
+
+        await this.saleReportModel.exportSale({ ...values })
+      } catch (e) {
+        message.error(e.message || '出错了，请重试')
+      }
+      this.setState({
+        isLoading: false
+      })
+    })
+  }
   onSubmitSearch = async () => {
     const { size } = this.props
     this.fetchData(1, size)
@@ -142,7 +163,7 @@ export default class ProductManMainCtl extends Component {
     const { current, size, total } = this.props
     return (
       <div>
-        <SearchReSaleManForm onSubmit={this.onSubmitSearch} formRef={(form) => { this.searchRSMForm = form }} />
+        <SearchReSaleManForm exportSale={this.exportSale} onSubmit={this.onSubmitSearch} formRef={(form) => { this.searchRSMForm = form }} />
         <Table scroll={{ x: 'max-content' }} dataSource={this.props.saleRecords} columns={this.columns} bordered pagination={false} rowKey={(record, index) => { return (`销售报表${index}`) }} loading={this.state.isLoading} />
         <Pagination size='small' onChange={this.onChangePage} total={total} pageSize={size} current={current}
           showSizeChanger showQuickJumper onShowSizeChange={this.onShowSizeChange} />

@@ -2,12 +2,11 @@ import React, { Component } from 'react'
 import controller from '@symph/joy/controller'
 import autowire from '@symph/joy/autowire'
 import { fmtDate } from '../../../util/dateUtils'
-import { Table, Pagination, message, Divider, Modal } from 'antd'
+import { Table, Pagination, message, Divider } from 'antd'
 import { constUtils, orderStatus } from '../../../util/constUtils'
 import OrderModel from '../../../model/OrderModel'
 // import TodoTaskModel from '../../../model/TodoTaskModel'
 import SearchOrderMainForm from './OrderMainForm'
-const { confirm } = Modal
 
 const data = []
 for (let i = 0; i < 46; i++) {
@@ -178,26 +177,36 @@ export default class OrderMainCtl extends Component {
       `/home/orderManager/orderProDetail?id=${record.id}`
     )
   }
-  offline = async (record) => {
-    confirm({
-      title: '确定下线此商品?',
-      content: 'Some descriptions',
-      okText: '确定',
-      okType: 'danger',
-      cancelText: '取消',
-      onOk () {
-        console.log('OK')
-      },
-      onCancel () {
-        console.log('Cancel')
-      }
-    })
-  }
+
   async componentDidMount () {
     const { current, size } = this.props
     await this.fetchData(current, size)
   }
 
+  exportOrder=() => {
+    this.searchOMForm.props.form.validateFields(async (err, fieldsValue) => {
+      if (err) {
+        return
+      }
+      let values = {
+        ...fieldsValue,
+        startDate: fmtDate(fieldsValue['startDate'], 'YYYY-MM-DD 00:00:00'),
+        endDate: fmtDate(fieldsValue['endDate'], 'YYYY-MM-DD 23:59:59')
+      }
+
+      try {
+        this.setState({
+          isLoading: true
+        })
+        await this.orderModel.exportOrder({ ...values })
+      } catch (e) {
+        message.error(e.message || '出错了，请重试')
+      }
+      this.setState({
+        isLoading: false
+      })
+    })
+  }
   onSubmitSearch = async () => {
     const { size } = this.props
     this.fetchData(1, size)
@@ -219,7 +228,7 @@ export default class OrderMainCtl extends Component {
     const hasSelected = selectedRowKeys.length > 0
     return (
       <div>
-        <SearchOrderMainForm selectedRowKeys={selectedRowKeys} hasSelected={hasSelected} loading={loading} onSubmit={this.onSubmitSearch} formRef={(form) => { this.searchOMForm = form }} />
+        <SearchOrderMainForm exportOrder={this.exportOrder} selectedRowKeys={selectedRowKeys} hasSelected={hasSelected} loading={loading} onSubmit={this.onSubmitSearch} formRef={(form) => { this.searchOMForm = form }} />
         <Table rowSelection={rowSelection} scroll={{ x: 'max-content' }} dataSource={this.props.records} columns={this.columns} bordered pagination={false} rowKey='id' loading={this.state.isLoading} />
         <Pagination size='small' onChange={this.onChangePage} total={total} pageSize={size} current={current}
           showSizeChanger showQuickJumper onShowSizeChange={this.onShowSizeChange} />

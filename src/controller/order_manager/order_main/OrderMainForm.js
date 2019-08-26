@@ -33,6 +33,9 @@ class OrderMainForm extends Component {
 
     // await this.
   }
+  exportOrder=() => {
+    this.props.exportOrder()
+  }
   // 批量删除订单
   allDelOrder = async () => {
     try {
@@ -41,11 +44,6 @@ class OrderMainForm extends Component {
     } catch (e) {
       message.error(e.message || '出错了，请重试')
     }
-  }
-  addProduct = () => {
-    this.props.history.push(
-      '/home/productForm?isRevise=false'
-    )
   }
   render () {
     const { form } = this.props
@@ -133,8 +131,9 @@ class OrderMainForm extends Component {
               <div>
                 <Button style={{ marginLeft: '24px' }} type='primary' disabled={!this.props.hasSelected} onClick={this.allSure}>确认收货</Button>
                 <Button style={{ marginLeft: '24px' }} type='danger' disabled={!this.props.hasSelected} onClick={this.allDelOrder}>删除</Button>
-                <Button style={{ marginLeft: '24px' }} onClick={this.addProduct}>导出</Button>
-
+                <Button style={{ marginLeft: '24px' }} type='primary' onClick={this.exportOrder} icon='download' >
+                  导出
+                </Button>
                 {/* <Button style={{ marginLeft: '24px' }} onClick={this.handleReset}>导入</Button> */}
               </div>
             </div>
