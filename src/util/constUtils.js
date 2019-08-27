@@ -59,5 +59,23 @@ export const orderStatus = {
 
 }
 
+/**
+ * 员工角色
+ */
+export const staffRole = {
+  1: { value: 1, name: '普通员工' },
+  2: { value: 2, name: '销售经理' }
+
+}
+/**
+ * 用户状态
+ */
+export const userStatus = {
+  '-1': { value: '-1', name: '删除' },
+  '0': { value: '0', name: '停用' },
+  '1': { value: '1', name: '正常' }
+
+}
+
 export default constUtils
 export { constUtils }

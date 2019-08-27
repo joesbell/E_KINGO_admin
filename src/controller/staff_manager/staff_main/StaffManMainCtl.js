@@ -4,20 +4,23 @@ import autowire from '@symph/joy/autowire'
 // import { fmtDate } from '../../../util/dateUtils'
 import { Table, Pagination, message, Divider, Modal } from 'antd'
 // import TaskPoolsModel from '../../../model/TaskPoolsModel'
-import ProModel from '../../../model/ProModel'
-import { constUtils, proStatus } from '../../../util/constUtils'
-import SearchProMainForm from './SearchProMainForm'
+import StaffModel from '../../../model/StaffModel'
+
+import { constUtils, staffRole } from '../../../util/constUtils'
+import SearchStaffMainForm from './SearchStaffMainForm'
 const { confirm } = Modal
 
-@controller(({ pro }) => {
+@controller(({ staff }) => {
   return {
-    current: pro.current,
-    size: pro.size,
-    total: pro.total,
-    records: pro.records
+    current: staff.current,
+    size: staff.size,
+    total: staff.total,
+    records: staff.records,
+    comList: staff.comList, // 分公司
+    departList: staff.departList // 部门
   }
 })
-export default class ProductManMainCtl extends Component {
+export default class StaffManMainCtl extends Component {
   constructor () {
     super(...arguments)
     this.state = {
@@ -26,66 +29,39 @@ export default class ProductManMainCtl extends Component {
     }
     this.columns = [
       {
-        title: '商品编号',
-        dataIndex: 'goodsNumber',
-        key: 'goodsNumber'
+        title: '员工编号',
+        dataIndex: 'userNumber',
+        key: 'userNumber'
       },
       {
-        title: '商品分类',
-        dataIndex: 'category',
-        key: 'category'
+        title: '分公司',
+        dataIndex: 'companyName',
+        key: 'companyName'
       },
       {
-        title: '商品名称',
+        title: '部门',
+        dataIndex: 'departmentName',
+        key: 'departmentName'
+      },
+      {
+        title: '员工姓名',
         dataIndex: 'name',
-        key: 'name',
-        render: (text, record, index) => {
+        key: 'name'
+      },
+      {
+        title: '员工电话',
+        dataIndex: 'phone',
+        key: 'phone'
+      },
+      {
+        title: '员工角色',
+        dataIndex: 'role',
+        key: 'role',
+        render: (text) => {
           return (
-            <span style={{ color: '#1890ff', cursor: 'pointer' }} onClick={() => this.goProDetail(record)}>{text}</span>
+            <span>{constUtils.getItemName(staffRole, text)}</span>
           )
         }
-      },
-      {
-        title: '零售价',
-        dataIndex: 'petailPrice',
-        key: 'petailPrice'
-      },
-      {
-        title: '限购数量',
-        dataIndex: 'limitNum',
-        key: 'limitNum'
-      },
-      {
-        title: '上限有效期',
-        dataIndex: 'onlineDate',
-        key: 'onlineDate'
-      },
-      {
-        title: '供货商姓名',
-        dataIndex: 'supplerName',
-        key: 'supplerName'
-      },
-      {
-        title: '供货商电话',
-        dataIndex: 'supplerPhone',
-        key: 'supplerPhone'
-      },
-      {
-        title: '商品状态',
-        dataIndex: 'status',
-        key: 'status',
-        render: (text) => {
-          if (text === 0) {
-            return (
-              <span style={{ color: '#ff7875' }}>{constUtils.getItemName(proStatus, text)}</span>
-            )
-          } else {
-            return (
-              <span >{constUtils.getItemName(proStatus, text)}</span>
-            )
-          }
-        }
-
       },
       {
         title: '操作',
@@ -98,7 +74,7 @@ export default class ProductManMainCtl extends Component {
               </span>
               <Divider type={'vertical'} />
               <span>
-                <a href='javascript:;' onClick={() => this.offline(record)} >{record.status === 0 ? '上线' : '下线'}</a>
+                <a href='javascript:;' onClick={() => this.offline(record)} >删除</a>
               </span>
             </div>
 
@@ -110,7 +86,7 @@ export default class ProductManMainCtl extends Component {
   // @autowire()
   // taskPoolsModel: TaskPoolsModel
   @autowire()
-  proModel: ProModel
+  staffModel: StaffModel
 
   changeForm = (record) => {
     this.props.history.push(
@@ -123,7 +99,7 @@ export default class ProductManMainCtl extends Component {
     )
   }
   fetchData = (current, size) => {
-    this.searchPMForm.props.form.validateFields(async (err, fieldsValue) => {
+    this.searchStaMForm.props.form.validateFields(async (err, fieldsValue) => {
       if (err) {
         return
       }
@@ -136,7 +112,7 @@ export default class ProductManMainCtl extends Component {
           isLoading: true
         })
 
-        await this.proModel.fetchProData({ current, size, ...values })
+        await this.staffModel.fetchStaffModel({ current, size, ...values })
       } catch (e) {
         message.error(e.message || '出错了，请重试')
       }
@@ -173,6 +149,7 @@ export default class ProductManMainCtl extends Component {
   }
   async componentDidMount () {
     const { current, size } = this.props
+    await this.staffModel.fetchCompany()
     await this.fetchData(current, size)
   }
 
@@ -191,7 +168,7 @@ export default class ProductManMainCtl extends Component {
     const { current, size, total, records } = this.props
     return (
       <div>
-        <SearchProMainForm onSubmit={this.onSubmitSearch} formRef={(form) => { this.searchPMForm = form }} />
+        <SearchStaffMainForm onSubmit={this.onSubmitSearch} formRef={(form) => { this.searchStaMForm = form }} />
         <Table scroll={{ x: 'max-content' }} dataSource={records} columns={this.columns} bordered pagination={false} rowKey={(record) => { return `${record.name}index` }} loading={this.state.isLoading} />
         <Pagination size='small' onChange={this.onChangePage} total={total} pageSize={size} current={current}
           showSizeChanger showQuickJumper onShowSizeChange={this.onShowSizeChange} />

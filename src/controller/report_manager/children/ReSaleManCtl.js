@@ -6,6 +6,7 @@ import { Table, Pagination, message, Modal } from 'antd'
 // import TaskPoolsModel from '../../../model/TaskPoolsModel'
 import saleReportModel from '../../../model/saleReportModel'
 import SearchReSaleManForm from '../form/ReSaleManForm'
+import querystring from 'querystring'
 const { confirm } = Modal
 
 @controller(({ saleReport }) => {
@@ -131,6 +132,7 @@ export default class ProductManMainCtl extends Component {
         return
       }
       let values = {
+        Authorization: window.sessionStorage.getItem('token'),
         ...fieldsValue
       }
 
@@ -139,7 +141,9 @@ export default class ProductManMainCtl extends Component {
           isLoading: true
         })
 
-        await this.saleReportModel.exportSale({ ...values })
+        let url = 'http://118.24.50.239:8181/report/exportSalesReport'
+        url += (url.indexOf('?') > 0 ? '' : '?') + querystring.stringify(values)
+        window.open(url)
       } catch (e) {
         message.error(e.message || '出错了，请重试')
       }

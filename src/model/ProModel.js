@@ -9,7 +9,7 @@ export default class ProModel {
     current: 1,
     size: 10,
     proDetail: null,
-    categoryValue: null, // 商品分类
+    categoryList: [], // 商品分类
     fileList: []
   }
 
@@ -29,7 +29,26 @@ export default class ProModel {
   }
   // 商品分类
   async proCategory (name) {
-    await callApi('/mallCommon/queryCategory', { ...name }, { method: 'POST' })
+    let { data: { data } } = await callApi('/mallCommon/queryCategory', { ...name }, { method: 'POST' })
+    this.setState({
+      categoryList: data
+    })
+  }
+  // 更改商品分类
+  async changeCategory (val) {
+    let newList = this.getState().categoryList
+    newList.push({ name: val })
+
+    var hash = {}
+    newList = newList.reduce(function (item, next) {
+      // eslint-disable-next-line no-unused-expressions
+      hash[next.name] ? '' : hash[next.name] = true && item.push(next)
+      return item
+    }, [])
+
+    this.setState({
+      categoryList: newList
+    })
   }
 
   // 商品上下线

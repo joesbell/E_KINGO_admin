@@ -26,7 +26,7 @@ class OrderMainForm extends Component {
   allSure = async () => {
     try {
       await this.orderModel.allSure({ id: this.props.selectedRowKeys })
-      Promise.all([this.props.onSubmit(), message.success('收货成功')])
+      Promise.all([this.props.onSubmit(), message.success('收货成功'), this.props.onSelectChange([])])
     } catch (e) {
       message.error(e.message || '出错了，请重试')
     }
@@ -40,7 +40,7 @@ class OrderMainForm extends Component {
   allDelOrder = async () => {
     try {
       await this.orderModel.allDelOrder({ id: this.props.selectedRowKeys })
-      Promise.all([this.props.onSubmit(), message.success('删除成功')])
+      Promise.all([this.props.onSubmit(), message.success('删除成功'), this.props.onSelectChange([])])
     } catch (e) {
       message.error(e.message || '出错了，请重试')
     }

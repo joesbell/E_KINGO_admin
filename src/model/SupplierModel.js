@@ -8,13 +8,21 @@ export default class SupplierModel {
     initState = {
       current: 1,
       size: 10,
+      AllSupplier: null,
       supplierFormData: null
     }
 
     async fetchSupplierData (val) {
       let { data: { data } } = await callApi('/suppler/query', { ...val }, { method: 'POST' })
       this.setState({
-        ...data
+        ...data,
+        AllSupplier: data.records
+      })
+    }
+    async fetchAllSupplier (val) {
+      let { data: { data } } = await callApi('/mallCommon/querySuppler', { ...val }, { method: 'POST' })
+      this.setState({
+        AllSupplier: data
       })
     }
 

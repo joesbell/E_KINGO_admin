@@ -7,7 +7,7 @@ import { constUtils, orderStatus } from '../../../util/constUtils'
 import OrderModel from '../../../model/OrderModel'
 // import TodoTaskModel from '../../../model/TodoTaskModel'
 import SearchOrderMainForm from './OrderMainForm'
-
+import querystring from 'querystring'
 const data = []
 for (let i = 0; i < 46; i++) {
   data.push({
@@ -198,7 +198,10 @@ export default class OrderMainCtl extends Component {
         this.setState({
           isLoading: true
         })
-        await this.orderModel.exportOrder({ ...values })
+        let url = 'http://118.24.50.239:8181/order/exportOrder'
+        url += (url.indexOf('?') > 0 ? '' : '?') + querystring.stringify(values)
+        window.open(url)
+        // await this.orderModel.exportOrder({ ...values })
       } catch (e) {
         message.error(e.message || '出错了，请重试')
       }
@@ -228,7 +231,7 @@ export default class OrderMainCtl extends Component {
     const hasSelected = selectedRowKeys.length > 0
     return (
       <div>
-        <SearchOrderMainForm exportOrder={this.exportOrder} selectedRowKeys={selectedRowKeys} hasSelected={hasSelected} loading={loading} onSubmit={this.onSubmitSearch} formRef={(form) => { this.searchOMForm = form }} />
+        <SearchOrderMainForm exportOrder={this.exportOrder} onSelectChange={this.onSelectChange} selectedRowKeys={selectedRowKeys} hasSelected={hasSelected} loading={loading} onSubmit={this.onSubmitSearch} formRef={(form) => { this.searchOMForm = form }} />
         <Table rowSelection={rowSelection} scroll={{ x: 'max-content' }} dataSource={this.props.records} columns={this.columns} bordered pagination={false} rowKey='id' loading={this.state.isLoading} />
         <Pagination size='small' onChange={this.onChangePage} total={total} pageSize={size} current={current}
           showSizeChanger showQuickJumper onShowSizeChange={this.onShowSizeChange} />

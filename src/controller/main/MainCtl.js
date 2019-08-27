@@ -152,8 +152,8 @@ export default class MainCtl extends React.Component {
             className={styles.sider}
           >
             <div className={styles.logo}>
-              {/* <img className={styles.icon} alt={'logo'}
-                src={require('./logo.png')} /> */}
+              <img className={styles.icon} alt={'logo'}
+                src={require('./logo.png')} />
               {collapsed
                 ? null
                 : <span className={styles.title}>后台管理系统</span>
@@ -202,6 +202,10 @@ export default class MainCtl extends React.Component {
                 <Route exact path='/home/supplierManager/supplierForm' component={require('../supplier_manager/supplier_main/SupplierFormCrl').default} />
 
                 <Route exact path='/home/staffManager' component={require('../staff_manager/StaffManCtl').default} />
+                <Route exact path='/home/staffManager/staffForm' component={require('../staff_manager/staff_main/StaffManFormCtl').default} />
+                <Route exact path='/home/systemManager/userManager' component={require('../system/user_mananger/UserManCtl').default} />
+                <Route exact path='/home/systemManager/userManager/userManForm' component={require('../system/user_mananger/user_main/UserManFormCtl').default} />
+
                 {/* <Route exact path='/home/systemManager' component={require('../system_manager/ReviewCtl').default} /> */}
 
                 {/* <Route exact path='/products' component={require('../product/ProductListCtl').default} />

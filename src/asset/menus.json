@@ -11,45 +11,52 @@
     },
     {
       "code": "/home/productManager",
-      "icon": "icon://antd/bank",
+      "icon": "icon://antd/shopping",
       "name": "商品管理",
       "url": "/home/productManager",
       "parent": "home"
     },
     {
       "code": "/home/orderManager",
-      "icon": "icon://antd/bank",
+      "icon": "icon://antd/book",
       "name": "订单管理",
       "url": "/home/orderManager",
       "parent": "home"
     },
     {
       "code": "/home/reportManager",
-      "icon": "icon://antd/appstore",
+      "icon": "icon://antd/table",
       "name": "报表管理",
       "url": "/home/reportManager",
       "parent": "home"
     },
     {
       "code": "/home/supplierManager",
-      "icon": "icon://antd/user",
+      "icon": "icon://antd/shop",
       "name": "供货商管理",
       "url": "/home/supplierManager",
       "parent": "home"
     },
     {
       "code": "/home/staffManager",
-      "icon": "icon://antd/money-collect",
+      "icon": "icon://antd/team",
       "name": "员工管理",
       "url": "/home/staffManager",
       "parent": "home"
     },
     {
       "code": "/home/systemManager",
-      "icon": "icon://antd/deployment-unit",
+      "icon": "icon://antd/setting",
       "name": "系统管理",
-      "url": "/home/systemManager",
+      "url": "",
       "parent": "home"
-    }
+    },
+        {
+          "code": "/home/systemManager/userManager",
+          "icon": "icon://antd/user",
+          "name": "用户管理",
+          "url": "/home/systemManager/userManager",
+          "parent": "/home/systemManager"
+        }
   ]
 }

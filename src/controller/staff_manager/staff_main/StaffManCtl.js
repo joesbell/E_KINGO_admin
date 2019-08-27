@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
-import PageHeader from '../../component/PageHeader'
-import { PageBodyCard } from '../../component/Card'
-import StaffManMainCtl from './staff_main/StaffManMainCtl'
+import PageHeader from '../../../component/PageHeader'
+import { PageBodyCard } from '../../../component/Card'
+import StaffManMainCtl from './StaffManMainCtl'
 export default class StaffManCtl extends Component {
   render () {
     return (

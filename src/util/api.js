@@ -58,7 +58,7 @@ function _callApi (url, params, { method = 'POST', responseBodyType = 'json' } =
   if (method === 'POST' || method === 'PUT') {
     body = JSON.stringify(params)
   } else if (method === 'GET' || method === 'delete') {
-    params = Object.assign({ _h: new Date().getTime() }, params) // 清理缓存
+    // params = Object.assign({ _h: new Date().getTime() }, params) // 清理缓存
     url += (url.indexOf('?') > 0 ? '' : '?') + querystring.stringify(params)
   }
 

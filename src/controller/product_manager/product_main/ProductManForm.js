@@ -4,7 +4,6 @@ import autowire from '@symph/joy/autowire'
 import SubmitForm, { Row, Col, ActionsItem } from '../../../component/SubmitForm'
 import Form from '../../../component/Form'
 import ProModel from '../../../model/ProModel'
-import InputSelect from '../../../component/InputSelect'
 import { parse } from 'querystring'
 
 import { Button, Input, DatePicker, Select, Upload, Icon, Modal, InputNumber } from 'antd'
@@ -35,7 +34,7 @@ function getBase64 (file) {
   let query = parse(window.location.search.slice(1))
   return {
     AllSupplier: sup.AllSupplier,
-    categoryValue: pro.categoryValue,
+    categoryList: pro.categoryList,
     fileList: pro.fileList,
     isRevise: query.isRevise ? query.isRevise : null,
     detail: query.detail ? query.detail : null,
@@ -45,7 +44,8 @@ function getBase64 (file) {
 class ProductManForm extends Component {
   state = {
     previewVisible: false,
-    previewImage: ''
+    previewImage: '',
+    name: ''
     // fileList: [
     // ]
   };
@@ -73,8 +73,21 @@ class ProductManForm extends Component {
       this.props.onSubmit()
     }
   }
-  setValue = (value) => {
-    this.props.form.setFieldsValue({ 'category': value })
+  onChange=(value) => {
+    this.setState({
+      name: value
+    })
+  }
+  onBlur= async () => {
+    await this.proModel.changeCategory(this.state.name)
+    await this.props.form.setFieldsValue({ 'category': this.state.name })
+  }
+  onSearch= (value) => {
+    if (value) {
+      this.setState({
+        name: value
+      })
+    }
   }
   handleReset = async () => {
     await this.props.form.resetFields()
@@ -115,7 +128,21 @@ class ProductManForm extends Component {
                       message: '不能为空'
                     }
                   ]
-                })(<InputSelect setValue={this.setValue} />)
+                })(<Select
+                  showSearch
+                  placeholder='选择商品分类'
+                  optionFilterProp='children'
+                  onChange={this.onChange}
+                  onBlur={this.onBlur}
+                  onSearch={this.onSearch}
+                  filterOption={(input, option) =>
+                    option.props.children.toString().indexOf(input.toString()) >= 0
+                  }
+                >
+                  {(this.props.categoryList || []).map(el => (
+                    <Option key={el.name} value={el.name} >{el.name}</Option>
+                  ))}
+                </Select>)
               }
             </Form.Item>
           </Col>

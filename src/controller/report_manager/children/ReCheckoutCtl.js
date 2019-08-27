@@ -6,6 +6,7 @@ import { Table, Pagination, message, Modal } from 'antd'
 import checkoutReportModel from '../../../model/checkoutReportModel'
 // import TodoTaskModel from '../../../model/TodoTaskModel'
 import SearchReCheckoutForm from '../form/ReCheckoutForm'
+import querystring from 'querystring'
 const { confirm } = Modal
 
 @controller(({ checkoutReport }) => {
@@ -103,6 +104,7 @@ export default class ReCheckoutCtl extends Component {
         return
       }
       let values = {
+        Authorization: window.sessionStorage.getItem('token'),
         ...fieldsValue,
         startDate: fmtDate(fieldsValue['startDate'], 'YYYY-MM-DD 00:00:00'),
         endDate: fmtDate(fieldsValue['endDate'], 'YYYY-MM-DD 23:59:59')
@@ -112,8 +114,9 @@ export default class ReCheckoutCtl extends Component {
         this.setState({
           isLoading: true
         })
-
-        await this.checkoutReportModel.exportCheckout({ ...values })
+        let url = 'http://118.24.50.239:8181/report/exportOutStock'
+        url += (url.indexOf('?') > 0 ? '' : '?') + querystring.stringify(values)
+        window.open(url)
       } catch (e) {
         message.error(e.message || '出错了，请重试')
       }
