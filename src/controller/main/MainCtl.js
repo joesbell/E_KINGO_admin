@@ -60,7 +60,7 @@ export default class MainCtl extends React.Component {
       }
 
       await this.appModel.initApp()
-      this.setState({
+      await this.setState({
         loading: false
       })
     } catch (e) {

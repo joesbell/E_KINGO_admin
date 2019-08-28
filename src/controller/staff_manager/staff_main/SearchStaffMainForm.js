@@ -137,8 +137,8 @@ class StaffMainForm extends Component {
               </div>
               <div>
                 <Button style={{ marginLeft: '24px' }} type='primary' onClick={this.addStaff}>新增员工</Button>
-                <Button style={{ marginLeft: '24px' }} onClick={this.handleReset}>导入员工</Button>
-                <Button style={{ marginLeft: '24px' }} onClick={this.handleReset}>下载导入模板</Button>
+
+                <Button style={{ marginLeft: '24px' }} icon='download' type='primary' href='http://118.24.50.239:8181/staff/download_template' download >下载导入模板</Button>
 
               </div>
             </div>

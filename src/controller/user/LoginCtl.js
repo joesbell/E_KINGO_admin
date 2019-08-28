@@ -74,6 +74,9 @@ class LoginPage extends Component {
       await this.props.history.push('/home')
     } catch (e) {
       message.error(e.message || '出错了，请重试')
+      await this.setState({
+        submitting: false
+      })
     }
   }
 

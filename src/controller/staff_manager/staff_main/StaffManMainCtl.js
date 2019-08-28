@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import controller from '@symph/joy/controller'
 import autowire from '@symph/joy/autowire'
 // import { fmtDate } from '../../../util/dateUtils'
-import { Table, Pagination, message, Divider, Modal } from 'antd'
+import { Table, Pagination, message, Divider, Modal, Spin, Upload, Icon, Button } from 'antd'
 // import TaskPoolsModel from '../../../model/TaskPoolsModel'
 import StaffModel from '../../../model/StaffModel'
 
@@ -23,9 +23,40 @@ const { confirm } = Modal
 export default class StaffManMainCtl extends Component {
   constructor () {
     super(...arguments)
+    let _this = this
     this.state = {
       isLoading: false,
-      btnLoading: false
+      btnLoading: false,
+      uploadProps: {
+        name: 'file',
+        showUploadList: false,
+        accept: 'text/csv',
+        action: 'http://118.24.50.239:8181/staff/import_staff',
+        headers: {
+          Authorization: window.sessionStorage.getItem('token')
+        },
+        onChange (info) {
+          if (info.file.status === 'uploading') {
+            _this.setState({
+              isLoading: true
+            })
+          }
+          if (info.file.status === 'done') {
+            console.log(info.file.response)
+
+            if (info.file.response.code === 200) {
+              Promise.all([message.success(`导入成功`), _this.setState({ isLoading: false }), _this.fetchData(1, 10)])
+            } else {
+              Promise.all([message.error(info.file.response.msg), _this.setState({ isLoading: false })])
+            }
+          } else if (info.file.status === 'error') {
+            _this.setState({
+              isLoading: false
+            })
+            message.error(`导入失败`)
+          }
+        }
+      }
     }
     this.columns = [
       {
@@ -90,7 +121,7 @@ export default class StaffManMainCtl extends Component {
 
   changeForm = (record) => {
     this.props.history.push(
-      `/home/productManager/productForm?id=${record.id}&isRevise=true`
+      `/home/staffManager/staffForm?id=${record.id}&&isRevise=false`
     )
   }
   goProDetail = (record) => {
@@ -125,19 +156,18 @@ export default class StaffManMainCtl extends Component {
     const { current, size } = this.props
     const _this = this
     confirm({
-      title: record.status === 0 ? '上线' : '下线',
-      content: `确定${record.status === 0 ? '上线' : '下线'}${record.name}?`,
+      title: '删除',
+      content: `确定删除${record.name}?`,
       okText: '确定',
-      okType: record.status === 0 ? 'primary' : 'danger',
+      okType: 'danger',
       cancelText: '取消',
       async onOk () {
         try {
-          let pro = {
-            'id': record.id,
-            'status': record.status === 0 ? 1 : 0
+          let staff = {
+            'id': record.id
           }
-          await _this.proModel.offlinePro(pro)
-          Promise.all([message.success(record.status === 0 ? '上线' : '下线', 1), Modal.destroyAll(), _this.fetchData(current, size)])
+          await _this.staffModel.deleteStaffModel(staff)
+          Promise.all([message.success('删除成功', 1), Modal.destroyAll(), _this.fetchData(current, size)])
         } catch (e) {
           message.error(e.message || '出错了，请重试')
         }
@@ -168,10 +198,22 @@ export default class StaffManMainCtl extends Component {
     const { current, size, total, records } = this.props
     return (
       <div>
-        <SearchStaffMainForm onSubmit={this.onSubmitSearch} formRef={(form) => { this.searchStaMForm = form }} />
-        <Table scroll={{ x: 'max-content' }} dataSource={records} columns={this.columns} bordered pagination={false} rowKey={(record) => { return `${record.name}index` }} loading={this.state.isLoading} />
-        <Pagination size='small' onChange={this.onChangePage} total={total} pageSize={size} current={current}
-          showSizeChanger showQuickJumper onShowSizeChange={this.onShowSizeChange} />
+        <Spin spinning={this.state.isLoading}>
+          <SearchStaffMainForm onSubmit={this.onSubmitSearch} formRef={(form) => { this.searchStaMForm = form }} > </SearchStaffMainForm>
+
+          <div>
+            <Upload {...this.state.uploadProps} className='uploadBtn'>
+              <Button style={{ marginBottom: '10px' }} >
+                <Icon type='upload' />
+                导入员工
+              </Button>
+            </Upload>
+          </div>
+          <Table scroll={{ x: 'max-content' }} dataSource={records} columns={this.columns} bordered pagination={false} rowKey={(record) => { return `${record.name}index` }} />
+          <Pagination size='small' onChange={this.onChangePage} total={total} pageSize={size} current={current}
+            showSizeChanger showQuickJumper onShowSizeChange={this.onShowSizeChange} />
+        </Spin>
+
       </div>
     )
   }

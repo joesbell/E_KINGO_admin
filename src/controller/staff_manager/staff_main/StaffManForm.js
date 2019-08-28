@@ -41,7 +41,7 @@ class StaffManForm extends Component {
     };
     @autowire()
     staffModel: StaffModel
-    componentDidMount = () => {
+    componentDidMount = async () => {
 
     }
     onSubmit = (e) => {
@@ -58,12 +58,14 @@ class StaffManForm extends Component {
     onBlur = async () => {
       await this.staffModel.changeCompany(this.state.Comname)
       await this.props.form.setFieldsValue({ 'companyName': this.state.Comname })
-    //   await this.
+      if (this.state.Comname) {
+        await this.staffModel.fetchDepart({ 'companyName': this.state.Comname })
+      }
     }
     onSearch = (value) => {
       if (value) {
         this.setState({
-          Comname: value
+          Comname: value.replace(/(^\s*)|(\s*$)/g, '')
         })
       }
     }
