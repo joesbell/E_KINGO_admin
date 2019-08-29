@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { message, Spin } from 'antd'
-import moment from 'moment'
+
 // import { Switch, Route } from '@symph/joy/router'
 import controller from '@symph/joy/controller'
 import autowire from '@symph/joy/autowire'
@@ -10,10 +10,10 @@ import { PageBodyCard } from '../../../../component/Card'
 import SubmitUserManForm from './UserManForm'
 import { parse } from 'querystring'
 // import { object } from 'prop-types'
-let uid = 1
 @controller(({ sysUser }, { match }) => {
   let query = parse(window.location.search.slice(1))
   return {
+    userDetail: sysUser.userDetail,
     isRevise: query.isRevise ? query.isRevise : null,
     detail: query.detail ? query.detail : null,
     id: query.id ? query.id : null
@@ -31,24 +31,10 @@ export default class UserManFormCtl extends Component {
           this.setState({
             isLoading: true
           })
-          let fileList = []
-          await this.proModel.getProDetail(this.props.id)
-          await ['number', 'category', 'name', 'costPrice', 'paths', 'petailPrice', 'onlineStartDate', 'onlineEndDate', 'limitNum', 'supplerId'].forEach(data => {
-            if (data === 'onlineStartDate' || data === 'onlineEndDate') {
-              this.SubmitPMForm.props.form.setFieldsValue({ [data]: moment(this.props.proDetail[data], 'YYYY-MM-DD') })
-            } else {
-              this.SubmitPMForm.props.form.setFieldsValue({ [data]: this.props.proDetail[data] })
-            }
+          await this.systemUserModel.getUser(this.props.id)
+          await ['loginName', 'password', 'userName', 'mobile'].forEach(data => {
+            this.SubmitUManForm.props.form.setFieldsValue({ [data]: this.props.userDetail[data] })
           })
-          for (const iterator of this.props.proDetail.paths) {
-            fileList.push({
-              url: iterator,
-              uid: uid++,
-              name: `image${uid++}.png`,
-              status: 'done'
-            })
-          }
-          await this.proModel.setFileList(fileList)
         } catch (e) {
           message.error(e.message || '出错了，请重试')
         }
@@ -81,7 +67,7 @@ export default class UserManFormCtl extends Component {
           })
           if (this.props.isRevise === 'true') {
             values = Object.assign(values, { id: this.props.id })
-            await this.proModel.updatePro({ ...values })
+            await this.systemUserModel.updateUser({ ...values })
             Promise.all([this.setState({ isLoading: false }), message.success('修改成功'), this.SubmitUManForm.props.form.resetFields(), this.props.history.goBack()])
           } else {
             await this.systemUserModel.addUser({ ...values })

@@ -7,7 +7,8 @@ export default class SystemUserModel {
 
     initState = {
       current: 1,
-      size: 10
+      size: 10,
+      userDetail: null
     }
 
     async fetchSystemUserData (val) {
@@ -16,16 +17,35 @@ export default class SystemUserModel {
         ...data
       })
     }
-    async delSupplierData (val) {
-      await callApi('/suppler/delete', { id: val }, { method: 'POST' })
-    }
-    async getsupplierForm (val) {
-      let { data: { data } } = await callApi('/suppler/get', { id: val }, { method: 'GET' })
+
+    async getUser (val) {
+      let { data: { data } } = await callApi('/user/get', { id: val }, { method: 'GET' })
       this.setState({
-        supplierFormData: data
+        userDetail: data
       })
     }
+    async delUser (val) {
+      await callApi('/user/delete', { loginName: val }, { method: 'POST' })
+    }
+    async updateUser (val) {
+      await callApi('/user/update', { ...val }, { method: 'POST' })
+    }
 
+    // 禁用
+
+    async disableStatus (val) {
+      await callApi('/user/disabled', { loginName: val }, { method: 'POST' })
+    }
+    // 启用
+
+    async enableStatus (val) {
+      await callApi('/user/enabled', { loginName: val }, { method: 'POST' })
+    }
+
+    // 重置密码
+    async restPassword (val) {
+      await callApi('/user/reset/password', { ...val }, { method: 'POST' })
+    }
     async addUser (val) {
       await callApi('/user/insert', { ...val }, { method: 'POST' })
     }

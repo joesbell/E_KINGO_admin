@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "joy",
     "build": "joy build",
+    "export": "npm run build && joy export",
     "start": "joy start",
     "start-server": "node ./server.js",
     "precommit": "lint-staged",

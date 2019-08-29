@@ -115,10 +115,6 @@ class LoginPage extends Component {
                   {
                     required: true,
                     message: '请输入用户名'
-                  }, {
-                    pattern: /^1(3|4|5|6|7|8|9)\d{9}$/,
-                    message: '请输入正确手机号'
-
                   }
                 ]}
               />

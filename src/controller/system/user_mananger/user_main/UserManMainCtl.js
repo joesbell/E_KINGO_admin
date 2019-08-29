@@ -66,15 +66,15 @@ export default class UserManMainCtl extends Component {
           return (
             <div>
               <span>
-                <a href='javascript:;' onClick={() => this.changeForm(record)}>详情</a>
+                <a href='javascript:;' onClick={() => this.FormDetail(record)}>详情</a>
               </span>
               <Divider type={'vertical'} />
               <span>
-                <a href='javascript:;' onClick={() => this.delete(record)} >禁用</a>
+                <a href='javascript:;' onClick={() => this.changeStatus(record)} >{record.enabled === '1' ? '禁用' : '启用'}</a>
               </span>
               <Divider type={'vertical'} />
               <span>
-                <a href='javascript:;' onClick={() => this.delete(record)} >重置密码</a>
+                <a href='javascript:;' onClick={() => this.reset(record)} >重置密码</a>
               </span>
               <Divider type={'vertical'} />
               <span>
@@ -117,6 +117,32 @@ export default class UserManMainCtl extends Component {
         })
       })
     }
+  FormDetail = (record) => {
+    this.props.history.push(
+      `/home/systemManager/userManager/userManForm?id=${record.id}&&isRevise=false&&detail=true`
+    )
+  }
+
+  reset = async (record) => {
+    let val = {
+      loginName: record.loginName,
+      password: 'DCJG123456'
+    }
+    await this.systemUserModel.disableStatus(val)
+    await Promise.all([message.success('密码重置成功'), this.onSubmitSearch()])
+  }
+  changeStatus = async (record) => {
+    try {
+      if (record.enabled === '1') {
+        await this.systemUserModel.disableStatus(record.loginName)
+      } else {
+        await this.systemUserModel.enableStatus(record.loginName)
+      }
+      await this.onSubmitSearch()
+    } catch (e) {
+      message.error(e.message || '出错了，请重试')
+    }
+  }
     changeForm = (record) => {
       this.props.history.push(
         `/home/supplierManager/supplierForm?id=${record.id}&&isRevise=true`
@@ -126,13 +152,13 @@ export default class UserManMainCtl extends Component {
       let _this = this
       confirm({
         title: '删除',
-        content: '确定删除此供货商?',
+        content: '确定删除此用户?',
         okText: '确定',
         okType: 'danger',
         cancelText: '取消',
         async onOk () {
           try {
-            await _this.supplierModel.delSupplierData(record.id)
+            await _this.systemUserModel.delUser(record.loginName)
             await Promise.all([message.success('删除成功'), Modal.destroyAll(), _this.onSubmitSearch()])
           } catch (e) {
             message.error(e.message || '出错了，请重试')

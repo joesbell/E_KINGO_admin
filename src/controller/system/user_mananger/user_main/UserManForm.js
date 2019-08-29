@@ -48,7 +48,6 @@ class UserManForm extends Component {
     }
     handleReset = async () => {
       await this.props.form.resetFields()
-      await this.proModel.setFileList([])
       await this.props.onCancle()
     }
     render () {
@@ -125,20 +124,6 @@ class UserManForm extends Component {
                 }
               </Form.Item>
             </Col>
-            {
-              this.props.isRevise === 'true'
-                ? <Col>
-                  <Form.Item
-                    label='状态'
-                  >
-                    {
-                      getFieldDecorator('petailPrice')(<Input style={{ width: '100%' }} min={0} readOnly={this.props.detail === 'true'} step={0.1} />)
-                    }
-                  </Form.Item>
-                </Col>
-                : null
-            }
-
             {
               this.props.detail === 'true'
                 ? null
