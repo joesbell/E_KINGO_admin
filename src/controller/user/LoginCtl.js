@@ -38,21 +38,6 @@ class LoginPage extends Component {
     this.setState({ type })
   }
 
-  // onGetCaptcha = () =>
-  //   new Promise((resolve, reject) => {
-  //     this.loginForm.validateFields(['mobile'], {}, (err, values) => {
-  //       if (err) {
-  //         reject(err)
-  //       } else {
-  //         const { dispatch } = this.props
-  //         dispatch({
-  //           type: 'login/getCaptcha',
-  //           payload: values.mobile
-  //         }).then(resolve).catch(reject)
-  //       }
-  //     })
-  //   })
-
   handleSubmit = async (err, values) => {
     if (err) {
       return
@@ -80,17 +65,6 @@ class LoginPage extends Component {
     }
   }
 
-  // changeAutoLogin = e => {
-  //   this.setState({
-  //     autoLogin: e.target.checked
-  //   })
-  // }
-
-  // renderMessage = content => (
-  //   <Alert style={{ marginBottom: 24 }} message={content} type='error'
-  //     showIcon />
-  // )
-
   render () {
     // const { login, submitting } = this.props
     const { type, submitting } = this.state
@@ -114,7 +88,11 @@ class LoginPage extends Component {
                 rules={[
                   {
                     required: true,
-                    message: '请输入用户名'
+                    message: '请输入手机号'
+                  },
+                  {
+                    pattern: /^1(3|4|5|6|7|8|9)\d{9}$/,
+                    message: '请输入正确手机号'
                   }
                 ]}
               />

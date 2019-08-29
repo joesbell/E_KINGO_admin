@@ -4,31 +4,6 @@ import { Link } from '@symph/joy/router'
 // import GlobalFooter from 'ant-design-pro/lib/GlobalFooter'
 import styles from './UserLayout.less'
 import logo from './assets/logo.png'
-
-// const links = [
-//   {
-//     key: 'help',
-//     title: '帮助',
-//     href: ''
-//   },
-//   {
-//     key: 'privacy',
-//     title: '隐私',
-//     href: ''
-//   },
-//   {
-//     key: 'terms',
-//     title: '团队',
-//     href: ''
-//   }
-// ]
-
-// const copyright = (
-//   <Fragment>
-//     Copyright <Icon type='copyright' /> 2019  京东数科
-//   </Fragment>
-// )
-
 export default class UserLayout extends Component {
   render () {
     const {

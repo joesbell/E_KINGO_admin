@@ -129,6 +129,7 @@ class ProductManForm extends Component {
                     }
                   ]
                 })(<Select
+                  disabled={this.props.detail === 'true'}
                   showSearch
                   placeholder='选择商品分类'
                   optionFilterProp='children'

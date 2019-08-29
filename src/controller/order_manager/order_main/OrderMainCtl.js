@@ -96,11 +96,11 @@ export default class OrderMainCtl extends Component {
               </span>
               <Divider type={'vertical'} />
               <span>
-                <a href='javascript:;' onClick={() => this.sure(record)}>确认收货</a>
+                <a href='javascript:;' onClick={() => this.singlesure(record)}>确认收货</a>
               </span>
               <Divider type={'vertical'} />
               <span>
-                <a href='javascript:;' onClick={() => this.delOrder(record)} >删除</a>
+                <a href='javascript:;' onClick={() => this.singledelOrder(record)} >删除</a>
               </span>
             </div>
 
@@ -114,18 +114,18 @@ export default class OrderMainCtl extends Component {
   // @autowire()
   // todoTaskModel: TodoTaskModel
 
-  sure=async (record) => {
+  singlesure=async (record) => {
     try {
       await this.orderModel.sure({ id: record.id })
-      Promise.all([this.props.onSubmit(), message.success('收货成功')])
+      Promise.all([this.fetchData(1, 10), message.success('收货成功')])
     } catch (e) {
       message.error(e.message || '出错了，请重试')
     }
   }
-  delOrder=async (record) => {
+  singledelOrder=async (record) => {
     try {
       await this.orderModel.delOrder({ id: record.id })
-      Promise.all([this.props.onSubmit(), message.success('删除成功')])
+      Promise.all([this.fetchData(1, 10), message.success('删除成功')])
     } catch (e) {
       message.error(e.message || '出错了，请重试')
     }

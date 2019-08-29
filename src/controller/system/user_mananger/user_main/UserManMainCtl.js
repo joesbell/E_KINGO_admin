@@ -78,7 +78,7 @@ export default class UserManMainCtl extends Component {
               </span>
               <Divider type={'vertical'} />
               <span>
-                <a href='javascript:;' onClick={() => this.delete(record)} >修改</a>
+                <a href='javascript:;' onClick={() => this.changeForm(record)} >修改</a>
               </span>
               <Divider type={'vertical'} />
               <span>
@@ -128,7 +128,7 @@ export default class UserManMainCtl extends Component {
       loginName: record.loginName,
       password: 'DCJG123456'
     }
-    await this.systemUserModel.disableStatus(val)
+    await this.systemUserModel.restPassword(val)
     await Promise.all([message.success('密码重置成功'), this.onSubmitSearch()])
   }
   changeStatus = async (record) => {
@@ -145,7 +145,7 @@ export default class UserManMainCtl extends Component {
   }
     changeForm = (record) => {
       this.props.history.push(
-        `/home/supplierManager/supplierForm?id=${record.id}&&isRevise=true`
+        `/home/systemManager/userManager/userManForm?id=${record.id}&&isRevise=true`
       )
     }
     delete = (record) => {

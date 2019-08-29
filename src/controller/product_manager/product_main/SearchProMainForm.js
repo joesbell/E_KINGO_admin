@@ -56,7 +56,7 @@ class ProMainForm extends Component {
               }
             </Form.Item>
           </Col>
-          <Col xs={24} sm={24} md={24} lg={24} xl={8} xxl={12}>
+          <Col xs={24} sm={24} md={24} lg={24} xl={24} xxl={12}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '4px', marginBottom: '10px' }}>
               <div>
                 <Button

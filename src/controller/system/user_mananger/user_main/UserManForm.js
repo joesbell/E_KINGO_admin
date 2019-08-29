@@ -58,17 +58,21 @@ class UserManForm extends Component {
           <Row>
             <Col>
               <Form.Item
-                label='用户账号'
+                label='手机号码'
               >
                 {
-                  getFieldDecorator('loginName', {
+                  getFieldDecorator('mobile', {
                     rules: [
                       {
                         required: true,
                         message: '不能为空'
+                      },
+                      {
+                        pattern: /^1(3|4|5|6|7|8|9)\d{9}$/,
+                        message: '请输入正确手机号'
                       }
                     ]
-                  })(<Input allowClear />)
+                  })(<Input readOnly={this.props.detail === 'true'} allowClear={!this.props.detail} />)
                 }
               </Form.Item>
             </Col>
@@ -84,7 +88,7 @@ class UserManForm extends Component {
                         message: '不能为空'
                       }
                     ]
-                  })(<Input setValue={this.setValue} />)
+                  })(<Input readOnly={this.props.detail === 'true'} allowClear={!this.props.detail} />)
                 }
               </Form.Item>
             </Col>
@@ -104,26 +108,7 @@ class UserManForm extends Component {
                 }
               </Form.Item>
             </Col>
-            <Col>
-              <Form.Item
-                label='手机号码'
-              >
-                {
-                  getFieldDecorator('mobile', {
-                    rules: [
-                      {
-                        required: true,
-                        message: '不能为空'
-                      },
-                      {
-                        pattern: /^1(3|4|5|6|7|8|9)\d{9}$/,
-                        message: '请输入正确手机号'
-                      }
-                    ]
-                  })(<Input allowClear={!this.props.detail} />)
-                }
-              </Form.Item>
-            </Col>
+
             {
               this.props.detail === 'true'
                 ? null

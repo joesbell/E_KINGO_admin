@@ -61,6 +61,8 @@ class sysUserForm extends Component {
             <Col>
               <Form.Item
                 label='状态'
+                labelAlign='left'
+
               >
                 {
                   getFieldDecorator('status', {

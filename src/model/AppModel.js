@@ -30,21 +30,6 @@ export default class AppModel {
   }
 
   async fetchMenus () {
-    // 菜单项 暂时不接入权限管理 2019-04-30 13:47:33
-    // let apiUrl = `/system/userLogin`
-    // if (env !== 'production') {
-    //   apiUrl = `http://172.24.5.10:3000/mock/63/system/userLogin`
-    // }
-    // let menus
-    // try {
-    //   let { data: { resultData } } = await callApi(apiUrl, null, { method: 'POST' })
-    //   menus = resultData
-    // } catch (e) {
-    //   // fixme 在poc环境，如果出错，不加载菜单项
-    //   console.warn('加载菜单项失败', e)
-    //   return
-    // }
-
     let menus = menusData.resultData
     let allMenusMap = {}
     let menuRoot = null
