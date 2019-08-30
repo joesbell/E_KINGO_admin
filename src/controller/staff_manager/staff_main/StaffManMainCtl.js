@@ -178,6 +178,7 @@ export default class StaffManMainCtl extends Component {
     })
   }
   async componentDidMount () {
+    this.searchStaMForm.props.form.resetFields()
     const { current, size } = this.props
     await this.staffModel.fetchCompany()
     await this.fetchData(current, size)

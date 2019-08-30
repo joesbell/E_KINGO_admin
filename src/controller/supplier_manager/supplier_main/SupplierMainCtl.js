@@ -131,6 +131,7 @@ export default class SupplierMainCtl extends Component {
     })
   }
   async componentDidMount () {
+    this.searchSLForm.props.form.resetFields()
     const { current, size } = this.props
     await this.fetchData(current, size)
   }

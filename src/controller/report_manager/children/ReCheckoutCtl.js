@@ -98,7 +98,7 @@ export default class ReCheckoutCtl extends Component {
       '/creditGrantingAudit/' + encodeURI(record.flowInstanceId) + `/auditMsg?isAudit=false&taskId=${record.taskId}`
     )
   }
-  exportCheckout=() => {
+  exportCheckout = () => {
     this.searchRCForm.props.form.validateFields(async (err, fieldsValue) => {
       if (err) {
         return
@@ -141,6 +141,7 @@ export default class ReCheckoutCtl extends Component {
     })
   }
   async componentDidMount () {
+    this.searchRCForm.props.form.resetFields()
     const { current, size } = this.props
     await this.checkoutReportModel.fetchCompany()
     await this.fetchData(current, size)

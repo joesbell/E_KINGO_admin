@@ -114,7 +114,7 @@ export default class OrderMainCtl extends Component {
   // @autowire()
   // todoTaskModel: TodoTaskModel
 
-  singlesure=async (record) => {
+  singlesure = async (record) => {
     try {
       await this.orderModel.sure({ id: record.id })
       Promise.all([this.fetchData(1, 10), message.success('收货成功')])
@@ -122,7 +122,7 @@ export default class OrderMainCtl extends Component {
       message.error(e.message || '出错了，请重试')
     }
   }
-  singledelOrder=async (record) => {
+  singledelOrder = async (record) => {
     try {
       await this.orderModel.delOrder({ id: record.id })
       Promise.all([this.fetchData(1, 10), message.success('删除成功')])
@@ -179,11 +179,12 @@ export default class OrderMainCtl extends Component {
   }
 
   async componentDidMount () {
+    this.searchOMForm.props.form.resetFields()
     const { current, size } = this.props
     await this.fetchData(current, size)
   }
 
-  exportOrder=() => {
+  exportOrder = () => {
     this.searchOMForm.props.form.validateFields(async (err, fieldsValue) => {
       if (err) {
         return

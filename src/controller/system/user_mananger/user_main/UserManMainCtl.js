@@ -91,32 +91,32 @@ export default class UserManMainCtl extends Component {
       }
     ]
   }
-    @autowire()
-    systemUserModel: SystemUserModel
+  @autowire()
+  systemUserModel: SystemUserModel
 
-    fetchData = (current, size) => {
-      this.searchUserForm.props.form.validateFields(async (err, fieldsValue) => {
-        if (err) {
-          return
-        }
-        let values = {
-          ...fieldsValue
-        }
+  fetchData = (current, size) => {
+    this.searchUserForm.props.form.validateFields(async (err, fieldsValue) => {
+      if (err) {
+        return
+      }
+      let values = {
+        ...fieldsValue
+      }
 
-        try {
-          this.setState({
-            isLoading: true
-          })
-
-          await this.systemUserModel.fetchSystemUserData({ current, size, ...values })
-        } catch (e) {
-          message.error(e.message || '出错了，请重试')
-        }
+      try {
         this.setState({
-          isLoading: false
+          isLoading: true
         })
+
+        await this.systemUserModel.fetchSystemUserData({ current, size, ...values })
+      } catch (e) {
+        message.error(e.message || '出错了，请重试')
+      }
+      this.setState({
+        isLoading: false
       })
-    }
+    })
+  }
   FormDetail = (record) => {
     this.props.history.push(
       `/home/systemManager/userManager/userManForm?id=${record.id}&&isRevise=false&&detail=true`
@@ -143,57 +143,58 @@ export default class UserManMainCtl extends Component {
       message.error(e.message || '出错了，请重试')
     }
   }
-    changeForm = (record) => {
-      this.props.history.push(
-        `/home/systemManager/userManager/userManForm?id=${record.id}&&isRevise=true`
-      )
-    }
-    delete = (record) => {
-      let _this = this
-      confirm({
-        title: '删除',
-        content: '确定删除此用户?',
-        okText: '确定',
-        okType: 'danger',
-        cancelText: '取消',
-        async onOk () {
-          try {
-            await _this.systemUserModel.delUser(record.loginName)
-            await Promise.all([message.success('删除成功'), Modal.destroyAll(), _this.onSubmitSearch()])
-          } catch (e) {
-            message.error(e.message || '出错了，请重试')
-          }
-        },
-        onCancel () {
-          console.log('Cancel')
+  changeForm = (record) => {
+    this.props.history.push(
+      `/home/systemManager/userManager/userManForm?id=${record.id}&&isRevise=true`
+    )
+  }
+  delete = (record) => {
+    let _this = this
+    confirm({
+      title: '删除',
+      content: '确定删除此用户?',
+      okText: '确定',
+      okType: 'danger',
+      cancelText: '取消',
+      async onOk () {
+        try {
+          await _this.systemUserModel.delUser(record.loginName)
+          await Promise.all([message.success('删除成功'), Modal.destroyAll(), _this.onSubmitSearch()])
+        } catch (e) {
+          message.error(e.message || '出错了，请重试')
         }
-      })
-    }
-    async componentDidMount () {
-      const { current, size } = this.props
-      await this.fetchData(current, size)
-    }
+      },
+      onCancel () {
+        console.log('Cancel')
+      }
+    })
+  }
+  async componentDidMount () {
+    this.searchUserForm.props.form.resetFields()
+    const { current, size } = this.props
+    await this.fetchData(current, size)
+  }
 
-    onSubmitSearch = async () => {
-      const { size } = this.props
-      this.fetchData(1, size)
-    }
-    onChangePage = (current, size) => {
-      this.fetchData(current, size)
-    }
-    onShowSizeChange = (current, size) => {
-      current = 1
-      this.fetchData(current, size)
-    }
-    render () {
-      const { current, size, total } = this.props
-      return (
-        <div>
-          <SearchUserForm onSubmit={this.onSubmitSearch} formRef={(form) => { this.searchUserForm = form }} />
-          <Table scroll={{ x: 'max-content' }} dataSource={this.props.records} columns={this.columns} bordered pagination={false} rowKey='id' loading={this.state.isLoading} />
-          <Pagination size='small' onChange={this.onChangePage} total={total} pageSize={size} current={current}
-            showSizeChanger showQuickJumper onShowSizeChange={this.onShowSizeChange} />
-        </div>
-      )
-    }
+  onSubmitSearch = async () => {
+    const { size } = this.props
+    this.fetchData(1, size)
+  }
+  onChangePage = (current, size) => {
+    this.fetchData(current, size)
+  }
+  onShowSizeChange = (current, size) => {
+    current = 1
+    this.fetchData(current, size)
+  }
+  render () {
+    const { current, size, total } = this.props
+    return (
+      <div>
+        <SearchUserForm onSubmit={this.onSubmitSearch} formRef={(form) => { this.searchUserForm = form }} />
+        <Table scroll={{ x: 'max-content' }} dataSource={this.props.records} columns={this.columns} bordered pagination={false} rowKey='id' loading={this.state.isLoading} />
+        <Pagination size='small' onChange={this.onChangePage} total={total} pageSize={size} current={current}
+          showSizeChanger showQuickJumper onShowSizeChange={this.onShowSizeChange} />
+      </div>
+    )
+  }
 }

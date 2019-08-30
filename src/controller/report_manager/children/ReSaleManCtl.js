@@ -122,11 +122,12 @@ export default class ProductManMainCtl extends Component {
     })
   }
   async componentDidMount () {
+    this.searchRSMForm.props.form.resetFields()
     const { current, size } = this.props
     await this.saleReportModel.fetchCompany()
     await this.fetchData(current, size)
   }
-  exportSale=() => {
+  exportSale = () => {
     this.searchRSMForm.props.form.validateFields(async (err, fieldsValue) => {
       if (err) {
         return

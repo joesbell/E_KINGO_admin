@@ -172,6 +172,7 @@ export default class ProductManMainCtl extends Component {
     })
   }
   async componentDidMount () {
+    this.searchPMForm.props.form.resetFields()
     const { current, size } = this.props
     await this.fetchData(current, size)
   }
