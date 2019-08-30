@@ -77,6 +77,7 @@ function _callApi (url, params, { method = 'POST', responseBodyType = 'json' } =
     method,
     headers,
     body,
+    mode: 'cors',
     credentials: 'include'
   }
   if (/\/\/mock.jdfmgt.com/.test(url)) {
