@@ -51,7 +51,7 @@ class ProductManForm extends Component {
   };
   @autowire()
   proModel: ProModel
-  componentDidMount=() => {
+  componentDidMount = () => {
 
   }
   handleCancel = () => this.setState({ previewVisible: false });
@@ -73,16 +73,16 @@ class ProductManForm extends Component {
       this.props.onSubmit()
     }
   }
-  onChange=(value) => {
+  onChange = (value) => {
     this.setState({
       name: value
     })
   }
-  onBlur= async () => {
+  onBlur = async () => {
     await this.proModel.changeCategory(this.state.name)
     await this.props.form.setFieldsValue({ 'category': this.state.name })
   }
-  onSearch= (value) => {
+  onSearch = (value) => {
     if (value) {
       this.setState({
         name: value
@@ -225,7 +225,7 @@ class ProductManForm extends Component {
                       message: '不能为空'
                     }
                   ]
-                })(<InputNumber style={{ width: '100%' }} min={0} readOnly={this.props.detail === 'true'} step={0.1} />)
+                })(<InputNumber style={{ width: '100%' }} min={0} readOnly={this.props.detail === 'true'} step={0.01} />)
               }
             </Form.Item>
           </Col>
@@ -241,7 +241,23 @@ class ProductManForm extends Component {
                       message: '不能为空'
                     }
                   ]
-                })(<InputNumber style={{ width: '100%' }} min={0} readOnly={this.props.detail === 'true'} step={0.1} />)
+                })(<InputNumber style={{ width: '100%' }} min={0} readOnly={this.props.detail === 'true'} step={0.01} />)
+              }
+            </Form.Item>
+          </Col>
+          <Col>
+            <Form.Item
+              label='商品规格'
+            >
+              {
+                getFieldDecorator('spec', {
+                  rules: [
+                    {
+                      required: true,
+                      message: '不能为空'
+                    }
+                  ]
+                })(<Input readOnly={this.props.detail === 'true'} allowClear={!this.props.detail} />)
               }
             </Form.Item>
           </Col>
@@ -263,7 +279,7 @@ class ProductManForm extends Component {
           </Col>
           <Col>
             <Form.Item
-              label='上线有效期'
+              label={<span><span style={{ color: '#f5222d' }}>*</span>上线有效期</span>}
               style={{ marginBottom: 0 }}
             >
               <Form.Item

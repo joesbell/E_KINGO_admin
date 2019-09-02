@@ -6,6 +6,7 @@ import { Table, Pagination, message, Modal } from 'antd'
 // import TaskPoolsModel from '../../../model/TaskPoolsModel'
 import saleReportModel from '../../../model/saleReportModel'
 import SearchReSaleManForm from '../form/ReSaleManForm'
+import { fmtThousands } from '../../../util/numberUtils'
 import querystring from 'querystring'
 const { confirm } = Modal
 
@@ -31,6 +32,7 @@ export default class ProductManMainCtl extends Component {
         title: '日期',
         dataIndex: 'orderDate',
         key: 'orderDate'
+
       },
       {
         title: '订单数量',
@@ -45,12 +47,22 @@ export default class ProductManMainCtl extends Component {
       {
         title: '销售总金额',
         dataIndex: 'salesAmount',
-        key: 'salesAmount'
+        key: 'salesAmount',
+        render: (text) => {
+          return (
+            fmtThousands(text)
+          )
+        }
       },
       {
         title: '成本总金额',
         dataIndex: 'costAmount',
-        key: 'costAmount'
+        key: 'costAmount',
+        render: (text) => {
+          return (
+            fmtThousands(text)
+          )
+        }
       },
       {
         title: '下单员工数量',

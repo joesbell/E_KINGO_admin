@@ -6,6 +6,8 @@ import { Table, Pagination, message, Divider, Modal } from 'antd'
 // import TaskPoolsModel from '../../../model/TaskPoolsModel'
 import ProModel from '../../../model/ProModel'
 import { constUtils, proStatus } from '../../../util/constUtils'
+import { fmtThousands } from '../../../util/numberUtils'
+
 import SearchProMainForm from './SearchProMainForm'
 const { confirm } = Modal
 
@@ -48,7 +50,12 @@ export default class ProductManMainCtl extends Component {
       {
         title: '零售价',
         dataIndex: 'petailPrice',
-        key: 'petailPrice'
+        key: 'petailPrice',
+        render: (text, record) => {
+          return (
+            <span>{`${fmtThousands(text)}元/${record.spec}`}</span>
+          )
+        }
       },
       {
         title: '限购数量',

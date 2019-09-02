@@ -4,6 +4,7 @@ import autowire from '@symph/joy/autowire'
 import { fmtDate } from '../../../util/dateUtils'
 import { Table, Pagination, message, Divider } from 'antd'
 import { constUtils, orderStatus } from '../../../util/constUtils'
+import { fmtThousands } from '../../../util/numberUtils'
 import OrderModel from '../../../model/OrderModel'
 // import TodoTaskModel from '../../../model/TodoTaskModel'
 import SearchOrderMainForm from './OrderMainForm'
@@ -65,7 +66,12 @@ export default class OrderMainCtl extends Component {
       },
       {
         title: '订单总金额',
-        dataIndex: 'orderAmount'
+        dataIndex: 'orderAmount',
+        render: (text) => {
+          return (
+            fmtThousands(text)
+          )
+        }
       },
       {
         title: '商品数量',
@@ -94,14 +100,27 @@ export default class OrderMainCtl extends Component {
               <span>
                 <a href='javascript:;' onClick={() => this.goOrderDetail(record)}>查看</a>
               </span>
-              <Divider type={'vertical'} />
-              <span>
-                <a href='javascript:;' onClick={() => this.singlesure(record)}>确认收货</a>
-              </span>
-              <Divider type={'vertical'} />
-              <span>
-                <a href='javascript:;' onClick={() => this.singledelOrder(record)} >删除</a>
-              </span>
+              {
+                record.orderStatus === 2
+                  ? null
+                  : <React.Fragment>
+                    <Divider type={'vertical'} />
+                    <span>
+                      <a href='javascript:;' onClick={() => this.singlesure(record)}>确认收货</a>
+                    </span>
+                  </React.Fragment>
+              }
+              {
+                record.orderStatus === 0
+                  ? null
+                  : <React.Fragment>
+                    <Divider type={'vertical'} />
+                    <span>
+                      <a href='javascript:;' onClick={() => this.singledelOrder(record)} >删除</a>
+                    </span>
+                  </React.Fragment>
+              }
+
             </div>
 
           )

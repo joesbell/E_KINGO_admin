@@ -3,6 +3,7 @@ import controller from '@symph/joy/controller'
 import autowire from '@symph/joy/autowire'
 import { fmtDate } from '../../../util/dateUtils'
 import { Table, Pagination, message, Modal } from 'antd'
+import { fmtThousands } from '../../../util/numberUtils'
 import checkoutReportModel from '../../../model/checkoutReportModel'
 // import TodoTaskModel from '../../../model/TodoTaskModel'
 import SearchReCheckoutForm from '../form/ReCheckoutForm'
@@ -50,7 +51,12 @@ export default class ReCheckoutCtl extends Component {
       {
         title: '销售总金额',
         dataIndex: 'salesAmount',
-        key: 'salesAmount'
+        key: 'salesAmount',
+        render: (text) => {
+          return (
+            fmtThousands(text)
+          )
+        }
       },
       {
         title: '下单员工数量',

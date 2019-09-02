@@ -51,12 +51,12 @@
       "url": "",
       "parent": "home"
     },
-        {
-          "code": "/home/systemManager/userManager",
-          "icon": "icon://antd/user",
-          "name": "用户管理",
-          "url": "/home/systemManager/userManager",
-          "parent": "/home/systemManager"
-        }
+    {
+      "code": "/home/systemManager/userManager",
+      "icon": "icon://antd/user",
+      "name": "用户管理",
+      "url": "/home/systemManager/userManager",
+      "parent": "/home/systemManager"
+    }
   ]
 }
